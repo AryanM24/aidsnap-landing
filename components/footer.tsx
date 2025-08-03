@@ -9,7 +9,7 @@ export function Footer() {
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           <div className="space-y-6">
             <Image
-              src="/logo.png?height=32&width=120&text=AidSnap+Logo"
+              src="/logo2.png?height=32&width=120&text=AidSnap+Logo"
               alt="AidSnap Logo"
               width={120}
               height={32}
