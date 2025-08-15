@@ -88,7 +88,7 @@ export default function HomePage() {
   ]
 
   return (
-    <div className="min-h-screen bg-[#222222] text-white overflow-hidden">
+    <div className="min-h-screen bg-[#262626] text-white overflow-hidden">
       <Navbar />
 
       {/* Hero Section */}
