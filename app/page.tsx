@@ -7,34 +7,31 @@ import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LiquidGlass } from "@/components/liquid-glass"
 import { useEffect, useState, useRef } from "react"
-import gsap from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { InjuryAnalysis } from "@/components/injury-analysis"
 import { EnvironmentAnalysis } from "@/components/environment-analysis"
 import { TypewriterGuidance } from "@/components/typewriter-guidance"
 import { AIGuidanceChat } from "@/components/ai-guidance-chat"
 import { OfflineIndicator } from "@/components/offline-indicator"
 import { CalmInterface } from "@/components/calm-interface"
+import { HeroSectionVideo } from "@/components/hero-section-video" // Import the new component
 
-
-
-gsap.registerPlugin(ScrollTrigger)
+// GSAP imports are no longer needed here as they are handled in the child component
 
 export default function HomePage() {
   const [isVisible, setIsVisible] = useState(false)
   const [isTyping, setIsTyping] = useState(false)
   const [hasTyped, setHasTyped] = useState(false)
   const [typedText, setTypedText] = useState("")
-  const [videoLoaded, setVideoLoaded] = useState(false)
-  const [videoError, setVideoError] = useState(false)
   const typingRef = useRef<HTMLElement>(null)
-  const heroVideoRef = useRef<HTMLVideoElement>(null)
+  
+  // This ref will be for the entire hero section, which will be pinned.
+  // It's passed to the HeroSectionVideo component to use as its trigger.
   const heroSectionRef = useRef<HTMLElement>(null)
 
   useEffect(() => {
     setIsVisible(true)
 
-    // Scroll reveal functionality
+    // Scroll reveal functionality for other elements on the page
     const observerOptions = {
       threshold: 0.1,
       rootMargin: "0px 0px -50px 0px",
@@ -48,77 +45,8 @@ export default function HomePage() {
       })
     }, observerOptions)
 
-    // Observe all scroll-reveal elements
     const scrollElements = document.querySelectorAll(".scroll-reveal")
     scrollElements.forEach((el) => observer.observe(el))
-
-    // GSAP ScrollTrigger for video scrubbing (desktop only)
-    const video = heroVideoRef.current
-    const heroSection = heroSectionRef.current
-    
-    if (video && heroSection) {
-      const handleVideoLoaded = () => {
-        console.log('Video loaded successfully, duration:', video.duration)
-        setVideoLoaded(true)
-        
-        // Only set up GSAP ScrollTrigger animation on desktop
-        if (window.innerWidth >= 768) {
-          gsap.to(video, {
-            currentTime: video.duration,
-            ease: "none",
-            scrollTrigger: {
-              trigger: heroSection,
-              start: "top top",
-              end: "bottom+=150% top", // Reduced from 200% to 150% for quicker completion
-              scrub: true,
-              pin: true,
-              pinSpacing: true,
-              onUpdate: (self) => {
-                // Optional: Add any additional logic on scroll update
-                if (self.progress >= 0.99) {
-                  // Video scrubbing complete
-                }
-              }
-            }
-          })
-        }
-      }
-      
-      const handleVideoError = (e: any) => {
-        console.error('Video loading failed:', e)
-        setVideoError(true)
-      }
-      
-      const handleResize = () => {
-        // Kill ScrollTrigger on mobile
-        if (window.innerWidth < 768) {
-          ScrollTrigger.getAll().forEach(trigger => {
-            if (trigger.vars.trigger === heroSection) {
-              trigger.kill()
-            }
-          })
-        } else if (video.readyState >= 1) {
-          // Re-initialize on desktop if video is loaded
-          handleVideoLoaded()
-        }
-      }
-      
-      if (video.readyState >= 1) {
-        // Video metadata is already loaded
-        handleVideoLoaded()
-      } else {
-        // Wait for video to load
-        video.addEventListener('loadedmetadata', handleVideoLoaded)
-        video.addEventListener('error', handleVideoError)
-      }
-      
-      // Listen for window resize to handle mobile/desktop switching
-      window.addEventListener('resize', handleResize)
-      
-      return () => {
-        window.removeEventListener('resize', handleResize)
-      }
-    }
 
     // Typing animation observer
     const typingObserver = new IntersectionObserver(
@@ -133,15 +61,13 @@ export default function HomePage() {
               if (currentIndex < fullText.length) {
                 setTypedText(fullText.slice(0, currentIndex + 1))
                 currentIndex++
-                setTimeout(typeText, 50) // Adjust speed here (lower = faster)
+                setTimeout(typeText, 50)
               } else {
-                // Animation complete, mark as typed and stop observing
                 setHasTyped(true)
                 setIsTyping(false)
                 typingObserver.disconnect()
               }
             }
-
             typeText()
           }
         })
@@ -152,25 +78,23 @@ export default function HomePage() {
       },
     )
 
-    // Observe the typing element
     if (typingRef.current) {
       typingObserver.observe(typingRef.current)
     }
-
+    
+    // Cleanup for observers
     return () => {
       observer.disconnect()
       typingObserver.disconnect()
-      // Clean up ScrollTrigger instances
-      ScrollTrigger.getAll().forEach(trigger => trigger.kill())
     }
-  }, [])
+  }, [hasTyped, isTyping]) // Dependencies for the typing effect
 
   return (
     <div className="bg-gradient-medical text-gray-900 min-h-screen">
       <Navbar />
 
-      {/* Hero Section with GSAP Pin */}
-      <section ref={heroSectionRef} className="hero-section relative bg-[#F3F7FB] md:bg-[#F3F7FB]">
+      {/* Hero Section - The ref is attached here */}
+      <section ref={heroSectionRef} className="hero-section relative bg-[#F3F7FB]">
         <main className="max-w-7xl mx-auto px-4 pt-32 pb-32 md:pt-56 md:pb-32">
           <div
             className={`text-center space-y-8 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
@@ -188,46 +112,8 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Hero Video - Hidden on mobile */}
-            <div className="mt-20 relative hidden md:block">
-              <div className="relative mx-auto max-w-5xl px-4 md:px-0">
-                {/* Scroll-driven Hero Video */}
-                <div className="relative">
-                  {!videoError ? (
-                    <video
-                      ref={heroVideoRef}
-                      className="mx-auto rounded-3xl w-full h-auto max-w-full object-contain md:object-cover"
-                      width={900}
-                      height={700}
-                      muted
-                      playsInline
-                      preload="auto"
-                      onLoadedMetadata={() => {
-                        console.log('Video metadata loaded')
-                        setVideoLoaded(true)
-                      }}
-                      onError={(e) => {
-                        console.error('Video error:', e)
-                        setVideoError(true)
-                      }}
-                      onCanPlay={() => console.log('Video can play')}
-                    >
-                      <source src="/hero_video.mp4" type="video/mp4" />
-                      Your browser does not support the video tag.
-                    </video>
-                  ) : (
-                    /* Fallback image if video fails to load */
-                    <Image
-                      src="/placeholder.svg?height=700&width=900&text=AidSnap+Emergency+AI+Interface"
-                      alt="AidSnap first aid AI assistant interface"
-                      width={900}
-                      height={700}
-                      className="mx-auto rounded-3xl max-w-full h-auto"
-                    />
-                  )}
-                </div>
-              </div>
-            </div>
+            {/* The new video component is placed here, receiving the section ref */}
+            <HeroSectionVideo triggerRef={heroSectionRef} />
           </div>
         </main>
       </section>
@@ -349,14 +235,9 @@ export default function HomePage() {
             <div className="max-w-6xl mx-auto">
               {/* Header */}
               <div className="text-left mb-16">
-                <h2 ref={typingRef} className="text-4xl md:text-5xl font-bold text-white mb-2">
-                  {typedText.split("\n").map((line, index) => (
-                    <span key={index}>
-                      {line}
-                      {index === 0 && <br />}
-                      {index === 1 && !hasTyped && <span className="animate-pulse">|</span>}
-                    </span>
-                  ))}
+                <h2 ref={typingRef} className="text-4xl md:text-5xl font-bold text-white mb-2 whitespace-pre-wrap">
+                  {typedText}
+                  {!hasTyped && <span className="animate-pulse">|</span>}
                 </h2>
                 <p className="text-gray-400 text-lg max-w-2xl mt-6">
                   AidSnap is always prepared with life-saving resources available offline, ready for any emergency
@@ -395,7 +276,7 @@ export default function HomePage() {
                         muted
                         playsInline
                         loop
-                        poster="/placeholder.svg?height=300&width=400&text=Offline+Emergency+Protocols"
+                        poster="https://placehold.co/400x300/181b20/ffffff?text=Offline+Protocols"
                       >
                         Your browser does not support the video tag.
                       </video>
@@ -513,7 +394,7 @@ export default function HomePage() {
                   muted
                   loop
                   playsInline
-                  poster="/placeholder.svg?height=400&width=600&text=Emergency+Dashboard+Interface"
+                  poster="https://placehold.co/500x400/f6f8fb/181b20?text=Emergency+Dashboard"
                   onError={(e) => {
                     console.error('Video failed to load:', e)
                   }}
