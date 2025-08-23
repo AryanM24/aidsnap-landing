@@ -42,27 +42,30 @@ export function TypewriterGuidance() {
   }, [currentStep])
 
   return (
-    <div className="relative w-full h-full bg-[#171717] rounded-2xl overflow-hidden p-6 flex flex-col justify-center">
+    <div className="relative w-full h-full bg-[#171717] rounded-2xl overflow-hidden p-4 md:p-6 flex flex-col justify-between">
       {/* Terminal-like background */}
       <div className="absolute inset-0 bg-gray-900/5 rounded-2xl"></div>
 
-      {/* Previous steps (faded) */}
-      <div className="space-y-2 mb-4">
-      {steps.slice(0, currentStep).map((step, index) => (
-        <div key={index} className="text-gray-400 text-sm font-mono">
-        {step} ✓
+      {/* Content area with proper spacing */}
+      <div className="flex-1 flex flex-col justify-center space-y-3 md:space-y-4 pb-8">
+        {/* Previous steps (faded) */}
+        <div className="space-y-1 md:space-y-2">
+        {steps.slice(0, currentStep).map((step, index) => (
+          <div key={index} className="text-gray-400 text-xs md:text-sm font-mono break-words">
+          {step} ✓
+          </div>
+        ))}
         </div>
-      ))}
+
+        {/* Current typing step */}
+        <div className="text-gray-100 text-xs md:text-sm font-mono font-medium break-words">
+        {displayedText}
+        {isTyping && <span className="animate-pulse">|</span>}
+        </div>
       </div>
 
-      {/* Current typing step */}
-      <div className="text-gray-100 text-sm font-mono font-medium">
-      {displayedText}
-      {isTyping && <span className="animate-pulse">|</span>}
-      </div>
-
-      {/* Progress indicator */}
-      <div className="absolute bottom-4 left-6 right-6">
+      {/* Progress indicator - fixed at bottom */}
+      <div className="absolute bottom-3 md:bottom-4 left-4 right-4 md:left-6 md:right-6">
       <div className="flex space-x-1">
         {steps.map((_, index) => (
         <div

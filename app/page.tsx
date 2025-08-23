@@ -148,7 +148,7 @@ export default function HomePage() {
 
       {/* Hero Section with GSAP Pin */}
       <section ref={heroSectionRef} className="hero-section relative bg-[#F3F7FB]">
-        <main className="max-w-7xl mx-auto px-4 pt-48 pb-20 md:pt-56 md:pb-32">
+        <main className="max-w-7xl mx-auto px-4 pt-32 pb-32 md:pt-56 md:pb-32">
           <div
             className={`text-center space-y-8 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
           >
@@ -165,15 +165,15 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* Hero Video */}
-            <div className="mt-20 relative">
-              <div className="relative mx-auto max-w-5xl">
+            {/* Hero Video - Hidden on mobile */}
+            <div className="mt-20 relative hidden md:block">
+              <div className="relative mx-auto max-w-5xl px-4 md:px-0">
                 {/* Scroll-driven Hero Video */}
                 <div className="relative">
                   {!videoError ? (
                     <video
                       ref={heroVideoRef}
-                      className="mx-auto rounded-3xl w-full h-auto"
+                      className="mx-auto rounded-3xl w-full h-auto max-w-full object-contain md:object-cover"
                       width={900}
                       height={700}
                       muted
@@ -199,7 +199,7 @@ export default function HomePage() {
                       alt="AidSnap first aid AI assistant interface"
                       width={900}
                       height={700}
-                      className="mx-auto rounded-3xl"
+                      className="mx-auto rounded-3xl max-w-full h-auto"
                     />
                   )}
                 </div>
@@ -425,8 +425,8 @@ export default function HomePage() {
           </div>
 
           <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-16 items-stretch">
-            {/* Left Column - Emergency Features */}
-            <div className="lg:col-span-1 flex flex-col justify-between space-y-8">
+            {/* Left Column - Emergency Features - Hidden on mobile */}
+            <div className="hidden lg:flex lg:col-span-1 flex-col justify-between space-y-8">
               {/* Visual Recognition */}
               <LiquidGlass
                 className="rounded-3xl p-8 cursor-pointer scroll-reveal liquid-glass-card flex-1"
@@ -480,8 +480,8 @@ export default function HomePage() {
               </LiquidGlass>
             </div>
 
-            {/* Right Column - Large Mockup (Autoplay Video) */}
-            <div className="lg:col-span-2 scroll-reveal flex items-stretch">
+            {/* Right Column - Large Mockup (Autoplay Video) - Full width on mobile */}
+            <div className="lg:col-span-2 col-span-full scroll-reveal flex items-stretch">
               <div className="rounded-3xl overflow-hidden w-full">
                 <video
                   src="/emergency_mockup.mp4"
