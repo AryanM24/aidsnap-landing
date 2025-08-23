@@ -52,7 +52,7 @@ export default function HomePage() {
     const scrollElements = document.querySelectorAll(".scroll-reveal")
     scrollElements.forEach((el) => observer.observe(el))
 
-    // GSAP ScrollTrigger for video scrubbing
+    // GSAP ScrollTrigger for video scrubbing (desktop only)
     const video = heroVideoRef.current
     const heroSection = heroSectionRef.current
     
@@ -61,30 +61,46 @@ export default function HomePage() {
         console.log('Video loaded successfully, duration:', video.duration)
         setVideoLoaded(true)
         
-        // Set up GSAP ScrollTrigger animation
-        gsap.to(video, {
-          currentTime: video.duration,
-          ease: "none",
-          scrollTrigger: {
-            trigger: heroSection,
-            start: "top top",
-            end: "bottom+=150% top", // Reduced from 200% to 150% for quicker completion
-            scrub: true,
-            pin: true,
-            pinSpacing: true,
-            onUpdate: (self) => {
-              // Optional: Add any additional logic on scroll update
-              if (self.progress >= 0.99) {
-                // Video scrubbing complete
+        // Only set up GSAP ScrollTrigger animation on desktop
+        if (window.innerWidth >= 768) {
+          gsap.to(video, {
+            currentTime: video.duration,
+            ease: "none",
+            scrollTrigger: {
+              trigger: heroSection,
+              start: "top top",
+              end: "bottom+=150% top", // Reduced from 200% to 150% for quicker completion
+              scrub: true,
+              pin: true,
+              pinSpacing: true,
+              onUpdate: (self) => {
+                // Optional: Add any additional logic on scroll update
+                if (self.progress >= 0.99) {
+                  // Video scrubbing complete
+                }
               }
             }
-          }
-        })
+          })
+        }
       }
       
       const handleVideoError = (e: any) => {
         console.error('Video loading failed:', e)
         setVideoError(true)
+      }
+      
+      const handleResize = () => {
+        // Kill ScrollTrigger on mobile
+        if (window.innerWidth < 768) {
+          ScrollTrigger.getAll().forEach(trigger => {
+            if (trigger.vars.trigger === heroSection) {
+              trigger.kill()
+            }
+          })
+        } else if (video.readyState >= 1) {
+          // Re-initialize on desktop if video is loaded
+          handleVideoLoaded()
+        }
       }
       
       if (video.readyState >= 1) {
@@ -94,6 +110,13 @@ export default function HomePage() {
         // Wait for video to load
         video.addEventListener('loadedmetadata', handleVideoLoaded)
         video.addEventListener('error', handleVideoError)
+      }
+      
+      // Listen for window resize to handle mobile/desktop switching
+      window.addEventListener('resize', handleResize)
+      
+      return () => {
+        window.removeEventListener('resize', handleResize)
       }
     }
 
@@ -147,7 +170,7 @@ export default function HomePage() {
       <Navbar />
 
       {/* Hero Section with GSAP Pin */}
-      <section ref={heroSectionRef} className="hero-section relative bg-[#F3F7FB]">
+      <section ref={heroSectionRef} className="hero-section relative bg-[#F3F7FB] md:bg-[#F3F7FB]">
         <main className="max-w-7xl mx-auto px-4 pt-32 pb-32 md:pt-56 md:pb-32">
           <div
             className={`text-center space-y-8 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
@@ -207,8 +230,6 @@ export default function HomePage() {
             </div>
           </div>
         </main>
-        {/* Blur transition overlay */}
-        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-b from-[#F3F7FB] to-transparent pointer-events-none" />
       </section>
 
       {/* Main Content Container */}
