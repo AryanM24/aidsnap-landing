@@ -105,8 +105,14 @@ export function Navbar() {
             Careers
           </Link>
           <Link
+            href="/press"
+            className={`text-sm transition-all duration-300 hover:text-gray-900 relative z-10 ${pathname === "/press" ? "text-gray-900" : "text-gray-600"}`}
+          >
+            Press
+          </Link>
+          <Link
             href="/support"
-            className={`text-sm transition-all duration-300 hover:text-gray-900 relative z-10 ${pathname === "/coming-soon" ? "text-gray-900" : "text-gray-600"}`}
+            className={`text-sm transition-all duration-300 hover:text-gray-900 relative z-10 ${pathname === "/support" ? "text-gray-900" : "text-gray-600"}`}
           >
             Help Center
           </Link>
@@ -207,6 +213,13 @@ export function Navbar() {
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   Careers
+                </Link>
+                <Link
+                  href="/press"
+                  className="block text-gray-700 hover:text-gray-900 py-3 text-lg font-medium transition-colors border-b border-gray-100"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Press
                 </Link>
                 <Link
                   href="/support"

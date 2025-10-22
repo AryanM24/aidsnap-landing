@@ -2,7 +2,7 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { Shield, Camera, Mic } from "lucide-react"
+import { Shield, Camera, Mic, Phone } from "lucide-react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LiquidGlass } from "@/components/liquid-glass"
@@ -22,6 +22,7 @@ export default function HomePage() {
   const [isTyping, setIsTyping] = useState(false)
   const [hasTyped, setHasTyped] = useState(false)
   const [typedText, setTypedText] = useState("")
+  const [activeStep, setActiveStep] = useState(0)
   const typingRef = useRef<HTMLElement>(null)
   
   // This ref will be for the entire hero section, which will be pinned.
@@ -89,13 +90,39 @@ export default function HomePage() {
     }
   }, [hasTyped, isTyping]) // Dependencies for the typing effect
 
+  // Separate useEffect for step tracking after component mounts
+  useEffect(() => {
+    const stepObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const stepIndex = Number.parseInt(entry.target.getAttribute("data-step") || "0")
+            setActiveStep(stepIndex)
+          }
+        })
+      },
+      {
+        threshold: 0.5,
+        rootMargin: "-20% 0px -20% 0px",
+      },
+    )
+
+    // Observe step elements
+    const stepElements = document.querySelectorAll(".step-section")
+    stepElements.forEach((el) => stepObserver.observe(el))
+
+    return () => {
+      stepObserver.disconnect()
+    }
+  }, []) // Run once after component mounts
+
   return (
     <div className="bg-gradient-medical text-gray-900 min-h-screen">
       <Navbar />
 
       {/* Hero Section - The ref is attached here */}
       <section ref={heroSectionRef} className="hero-section relative bg-[#F3F7FB]">
-        <main className="max-w-7xl mx-auto px-4 pt-32 pb-32 md:pt-56 md:pb-32">
+        <main className="max-w-7xl mx-auto px-4 pt-40 pb-40 md:pt-56 md:pb-32">
           <div
             className={`text-center space-y-8 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
           >
@@ -203,6 +230,158 @@ export default function HomePage() {
               <div className="space-y-6 p-8">
                 <div className="aspect-[4/3] rounded-2xl ">
                   <AIGuidanceChat />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* AidSnap Agent Section */}
+      <section className="py-20 md:py-32 scroll-reveal hidden md:block">
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="text-center mb-20">
+            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">How it Works</h2>
+            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+              Experience the next generation of AI-powered emergency response. Our intelligent agent guides you through
+              critical situations with unprecedented accuracy and speed.
+            </p>
+          </div>
+
+          <div className="max-w-6xl mx-auto space-y-8">
+            {/* Step 1 */}
+            <div className="step-section bg-white/30 backdrop-blur-sm border border-white/20 p-8 md:p-12" data-step={0}>
+              <div className="grid md:grid-cols-2 gap-16 items-center">
+                <div className="space-y-6">
+                  <div className="flex items-start space-x-4">
+                    <div
+                      className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
+                        activeStep === 0 ? "bg-[#F87171]" : "bg-gray-300"
+                      }`}
+                    >
+                      <Camera className={`w-6 h-6 ${activeStep === 0 ? "text-white" : "text-gray-400"}`} />
+                    </div>
+                    <div>
+                      <p className="text-[#F87171] text-sm font-medium mb-2 uppercase tracking-wider">Step-01</p>
+                      <h3 className="text-3xl font-bold text-gray-900 mb-4">Point & Analyze</h3>
+                      <p className="text-gray-600 leading-relaxed text-lg">
+                        Simply point your camera at the injury or describe symptoms. Our AI instantly analyzes the
+                        situation and provides immediate assessment.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl p-8 h-80 flex items-center justify-center">
+                  <div className="bg-white/70 backdrop-blur-sm border border-white/40 rounded-2xl p-8 w-full max-w-sm text-center shadow-lg">
+                    <div className="w-16 h-16 bg-[#F87171] rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Camera className="w-8 h-8 text-white" />
+                    </div>
+                    <h4 className="text-xl font-semibold text-gray-900 mb-2">AI Analysis</h4>
+                    <p className="text-gray-600 mb-4">Analyzing injury...</p>
+                    <div className="bg-gray-100/80 rounded-lg p-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm text-gray-600">Analyzing...</span>
+                        <span className="text-sm text-[#F87171]">85%</span>
+                      </div>
+                      <div className="w-full bg-gray-300 rounded-full h-2">
+                        <div className="bg-[#F87171] h-2 rounded-full w-4/5 transition-all duration-1000"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="step-section bg-white/30 backdrop-blur-sm border border-white/20 p-8 md:p-12" data-step={1}>
+              <div className="grid md:grid-cols-2 gap-16 items-center">
+                <div className="space-y-6">
+                  <div className="flex items-start space-x-4">
+                    <div
+                      className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
+                        activeStep === 1 ? "bg-[#F87171]" : "bg-gray-300"
+                      }`}
+                    >
+                      <Mic className={`w-6 h-6 ${activeStep === 1 ? "text-white" : "text-gray-400"}`} />
+                    </div>
+                    <div>
+                      <p className="text-[#F87171] text-sm font-medium mb-2 uppercase tracking-wider">Step-02</p>
+                      <h3 className="text-3xl font-bold text-gray-900 mb-4">Follow Voice Guidance</h3>
+                      <p className="text-gray-600 leading-relaxed text-lg">
+                        Receive clear, step-by-step voice instructions for immediate care. Our AI guides you through each
+                        action with calm, professional direction.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl p-8 h-80 flex items-center justify-center">
+                  <div className="bg-white/70 backdrop-blur-sm border border-white/40 rounded-2xl p-8 w-full max-w-sm text-center shadow-lg">
+                    <div className="w-16 h-16 bg-[#F87171] rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Mic className="w-8 h-8 text-white" />
+                    </div>
+                    <h4 className="text-xl font-semibold text-gray-900 mb-2">Voice Guidance</h4>
+                    <p className="text-gray-600 mb-4">Step 2 of 5 complete</p>
+                    <div className="bg-gray-100/80 rounded-lg p-4">
+                      <div className="flex justify-between text-sm text-gray-600 mb-2">
+                        <span>Progress</span>
+                        <span>40%</span>
+                      </div>
+                      <div className="w-full bg-gray-300 rounded-full h-2 mb-3">
+                        <div className="bg-[#F87171] h-2 rounded-full w-2/5"></div>
+                      </div>
+                      <p className="text-sm text-gray-600 text-left">
+                        "Apply direct pressure to the wound using a clean cloth..."
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="step-section bg-white/30 backdrop-blur-sm border border-white/20 p-8 md:p-12" data-step={2}>
+              <div className="grid md:grid-cols-2 gap-16 items-center">
+                <div className="space-y-6">
+                  <div className="flex items-start space-x-4">
+                    <div
+                      className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
+                        activeStep === 2 ? "bg-[#F87171]" : "bg-gray-300"
+                      }`}
+                    >
+                      <Phone className={`w-6 h-6 ${activeStep === 2 ? "text-white" : "text-gray-400"}`} />
+                    </div>
+                    <div>
+                      <p className="text-[#F87171] text-sm font-medium mb-2 uppercase tracking-wider">Step-03</p>
+                      <h3 className="text-3xl font-bold text-gray-900 mb-4">Connect Emergency Services</h3>
+                      <p className="text-gray-600 leading-relaxed text-lg">
+                        When needed, instantly connect with emergency services. Your location and situation details are
+                        automatically shared with responders.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="rounded-3xl p-8 h-80 flex items-center justify-center">
+                  <div className="bg-white/70 backdrop-blur-sm border border-white/40 rounded-2xl p-8 w-full max-w-sm text-center shadow-lg">
+                    <div className="w-16 h-16 bg-[#F87171] rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Phone className="w-8 h-8 text-white" />
+                    </div>
+                    <h4 className="text-xl font-semibold text-gray-900 mb-2">Emergency Services</h4>
+                    <p className="text-gray-600 mb-4">Connected to 911</p>
+                    <div className="bg-gray-100/80 rounded-lg p-4">
+                      <div className="flex items-center justify-center space-x-2 mb-3">
+                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                        <span className="text-sm text-gray-600">Connected</span>
+                      </div>
+                      <div className="text-left space-y-2">
+                        <p className="text-sm text-gray-600">📍 Location shared</p>
+                        <p className="text-sm text-gray-600">🚑 ETA: 7 minutes</p>
+                        <p className="text-sm text-gray-600">📋 Medical info sent</p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>

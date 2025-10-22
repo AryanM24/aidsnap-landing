@@ -69,9 +69,6 @@ export function Footer() {
               >
                 Emergency
               </Link>
-              <Link href="/beta" className="block text-gray-400 hover:text-[#F87171] text-sm transition-colors">
-                Beta
-              </Link>
               <Link
                 href="/#download-section"
                 className="block text-gray-400 hover:text-[#F87171] text-sm transition-colors"
@@ -93,7 +90,7 @@ export function Footer() {
               <Link href="/manifesto" className="block text-gray-400 hover:text-[#F87171] text-sm transition-colors">
                 Manifesto
               </Link>
-              <Link href="/coming-soon" className="block text-gray-400 hover:text-[#F87171] text-sm transition-colors">
+              <Link href="/press" className="block text-gray-400 hover:text-[#F87171] text-sm transition-colors">
                 Press
               </Link>
             </div>
