@@ -23,7 +23,7 @@ export default function RootLayout({
           rel="stylesheet"
         />
       </head>
-      <body className="font-poppins">{children}</body>
+      <body className="font-poppins" suppressHydrationWarning={true}>{children}</body>
     </html>
   )
 }

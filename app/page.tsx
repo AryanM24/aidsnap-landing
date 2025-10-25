@@ -14,8 +14,15 @@ import { AIGuidanceChat } from "@/components/ai-guidance-chat"
 import { OfflineIndicator } from "@/components/offline-indicator"
 import { CalmInterface } from "@/components/calm-interface"
 import { HeroSectionVideo } from "@/components/hero-section-video" // Import the new component
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
 
-// GSAP imports are no longer needed here as they are handled in the child component
+import { gsap } from "gsap"
+import { ScrollTrigger } from "gsap/ScrollTrigger"
+
+// Register ScrollTrigger plugin
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger)
+}
 
 export default function HomePage() {
   const [isVisible, setIsVisible] = useState(false)
@@ -32,22 +39,90 @@ export default function HomePage() {
   useEffect(() => {
     setIsVisible(true)
 
-    // Scroll reveal functionality for other elements on the page
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px",
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("revealed")
-        }
+    // Mobile-specific GSAP scroll animations
+    if (typeof window !== "undefined" && window.innerWidth < 768) {
+      // Animate scroll-reveal elements on mobile
+      gsap.utils.toArray(".scroll-reveal").forEach((element: any) => {
+        gsap.fromTo(
+          element,
+          {
+            opacity: 0,
+            y: 50,
+          },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            scrollTrigger: {
+              trigger: element,
+              start: "top 80%",
+              end: "bottom 20%",
+              toggleActions: "play none none reverse",
+            },
+          }
+        )
       })
-    }, observerOptions)
 
-    const scrollElements = document.querySelectorAll(".scroll-reveal")
-    scrollElements.forEach((el) => observer.observe(el))
+      // Enhanced animations for specific sections on mobile
+      gsap.fromTo(
+        "#features-section",
+        {
+          opacity: 0,
+          y: 100,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 1,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: "#features-section",
+            start: "top 70%",
+            end: "bottom 30%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      )
+
+      // Quote section animation on mobile
+      gsap.fromTo(
+        ".quote-section",
+        {
+          opacity: 0,
+          y: 80,
+        },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: ".quote-section",
+            start: "top 80%",
+            end: "bottom 20%",
+            toggleActions: "play none none reverse",
+          },
+        }
+      )
+    } else {
+      // Desktop: Use CSS-based scroll reveal
+      const observerOptions = {
+        threshold: 0.1,
+        rootMargin: "0px 0px -50px 0px",
+      }
+
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("revealed")
+          }
+        })
+      }, observerOptions)
+
+      const scrollElements = document.querySelectorAll(".scroll-reveal")
+      scrollElements.forEach((el) => observer.observe(el))
+    }
 
     // Typing animation observer
     const typingObserver = new IntersectionObserver(
@@ -122,6 +197,7 @@ export default function HomePage() {
 
       {/* Hero Section - The ref is attached here */}
       <section ref={heroSectionRef} className="hero-section relative bg-[#F3F7FB]">
+        <div className="py-12" role="separator" aria-hidden="true"></div>
         <main className="max-w-7xl mx-auto px-4 pt-40 pb-40 md:pt-56 md:pb-32">
           <div
             className={`text-center space-y-8 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
@@ -143,13 +219,14 @@ export default function HomePage() {
             <HeroSectionVideo triggerRef={heroSectionRef} />
           </div>
         </main>
+        <div className="py-12" role="separator" aria-hidden="true"></div>
       </section>
 
       {/* Main Content Container */}
-      <div>
+      <div className="bg-[#F3F7FB] md:bg-transparent">
       
       {/* AI Capabilities Showcase */}
-      <section id="features-section" className="py-20 md:py-32 scroll-reveal">
+      <section id="features-section" className="py-20 md:py-32 scroll-reveal rounded-t-[48px] md:rounded-t-none bg-white">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-20">
             <p className="text-[#F87171] text-sm font-medium mb-4 uppercase tracking-wider">
@@ -162,7 +239,94 @@ export default function HomePage() {
             </h2>
           </div>
 
-          <div className="max-w-6xl mx-auto bg-white/30 backdrop-blur-sm border border-white/20 p-8 md:p-12">
+          {/* Mobile Carousel */}
+          <div className="md:hidden">
+            <Carousel className="w-full" opts={{ align: "start" }}>
+              <CarouselContent className="-ml-2">
+                <CarouselItem className="pl-2 basis-[85%]">
+                  <div className="bg-white/30 backdrop-blur-sm border border-white/20 rounded-2xl p-6 h-full">
+                    <div className="space-y-6 h-full flex flex-col">
+                      <div className="aspect-[4/3] rounded-2xl overflow-hidden">
+                        <InjuryAnalysis />
+                      </div>
+                      <div className="space-y-3 flex-1">
+                        <div className="text-left">
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                            Analyze visual injuries with QuickSnap
+                          </h3>
+                          <p className="text-gray-600 leading-relaxed">
+                            AidSnap's QuickSnap feature instantly analyzes wounds, burns, cuts, and symptoms through your
+                            camera — providing immediate assessment and treatment guidance for any visible injury.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="pl-2 basis-[85%]">
+                  <div className="bg-white/30 backdrop-blur-sm border border-white/20 rounded-2xl p-6 h-full">
+                    <div className="space-y-6 h-full flex flex-col">
+                      <div className="aspect-[4/3] rounded-2xl overflow-hidden">
+                        <EnvironmentAnalysis />
+                      </div>
+                      <div className="space-y-3 flex-1">
+                        <div className="text-left">
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                            Analyze your environment for resources
+                          </h3>
+                          <p className="text-gray-600 leading-relaxed">
+                            Upload an image of your surroundings and AidSnap identifies available first aid resources —
+                            towels, ice, medications, or improvised tools for emergency care.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="pl-2 basis-[85%]">
+                  <div className="bg-white/30 backdrop-blur-sm border border-white/20 rounded-2xl p-6 h-full">
+                    <div className="space-y-6 h-full flex flex-col">
+                      <div className="aspect-[4/3] rounded-2xl overflow-hidden">
+                        <TypewriterGuidance />
+                      </div>
+                      <div className="space-y-3 flex-1">
+                        <div className="text-left">
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">Provides instant guidance</h3>
+                          <p className="text-gray-600 leading-relaxed">
+                            Just describe the emergency. AidSnap knows what you're dealing with and responds with exactly
+                            the right medical steps — no searching, no delays.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+                <CarouselItem className="pl-2 basis-[85%]">
+                  <div className="bg-white/30 backdrop-blur-sm border border-white/20 rounded-2xl p-6 h-full">
+                    <div className="space-y-6 h-full flex flex-col">
+                      <div className="aspect-[4/3] rounded-2xl overflow-hidden">
+                        <AIGuidanceChat />
+                      </div>
+                      <div className="space-y-3 flex-1">
+                        <div className="text-left">
+                          <h3 className="text-xl font-semibold text-gray-900 mb-2">AidSnap Agent Chat</h3>
+                          <p className="text-gray-600 leading-relaxed">
+                            Chat with our custom AI agent for personalized emergency guidance and general health assistance. Get instant answers to your
+                            questions and receive step-by-step instructions tailored to your specific situation.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </CarouselItem>
+              </CarouselContent>
+              <CarouselPrevious />
+              <CarouselNext />
+            </Carousel>
+          </div>
+
+          {/* Desktop Grid */}
+          <div className="hidden md:block max-w-6xl mx-auto bg-white/30 backdrop-blur-sm border border-white/20 p-8 md:p-12">
             {/* 2x2 Grid */}
             <div className="grid md:grid-cols-2 gap-0">
               {/* Top Left - Analyze visual injuries with QuickSnap */}
@@ -390,7 +554,7 @@ export default function HomePage() {
       </section>
 
       {/* Quote Section - Separate */}
-      <section className="py-20 md:py-32 scroll-reveal">
+      <section className="quote-section py-20 md:py-32 scroll-reveal rounded-b-[48px] md:rounded-b-none bg-white border-t border-gray-300 md:border-t-0">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center">
             <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">"This could change everything."</h3>
@@ -409,7 +573,7 @@ export default function HomePage() {
 
       {/* It's like your mom Section - Hidden on mobile */}
       <section className="scroll-reveal hidden md:block">
-        <div className="bg-[#181B20] py-20 md:py-32 w-full">
+        <div className="bg-[#181B20] py-20 md:py-32 w-full rounded-t-[48px] rounded-b-[48px]">
           <div className="max-w-7xl mx-auto px-4">
             <div className="max-w-6xl mx-auto">
               {/* Header */}
@@ -599,11 +763,11 @@ export default function HomePage() {
             </h2>
 
             <div className="space-y-4">
-              <button className="bg-black text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-gray-800 transition-colors inline-flex items-center space-x-3">
+              <button className="bg-gray-400 text-white px-8 py-4 rounded-full text-lg font-medium cursor-not-allowed inline-flex items-center space-x-3" disabled>
                 <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
                 </svg>
-                <span>Download for iOS</span>
+                <span>Coming Soon on iOS</span>
               </button>
 
               <div>
@@ -613,7 +777,7 @@ export default function HomePage() {
                   rel="noopener noreferrer"
                   className="inline-block"
                 >
-                  <button className="text-gray-600 hover:text-gray-800 transition-colors underline text-lg">
+                  <button className="text-gray-800 hover:text-gray-800 transition-colors underline text-lg">
                     Download for Android
                   </button>
                 </a>
