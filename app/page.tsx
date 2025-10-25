@@ -6,7 +6,7 @@ import { Shield, Camera, Mic, Phone } from "lucide-react"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
 import { LiquidGlass } from "@/components/liquid-glass"
-import { useEffect, useState, useRef } from "react"
+import { useEffect, useState, useRef, RefObject } from "react"
 import { InjuryAnalysis } from "@/components/injury-analysis"
 import { EnvironmentAnalysis } from "@/components/environment-analysis"
 import { TypewriterGuidance } from "@/components/typewriter-guidance"
@@ -30,7 +30,7 @@ export default function HomePage() {
   const [hasTyped, setHasTyped] = useState(false)
   const [typedText, setTypedText] = useState("")
   const [activeStep, setActiveStep] = useState(0)
-  const typingRef = useRef<HTMLElement>(null)
+  const typingRef = useRef<HTMLHeadingElement>(null)
   
   // This ref will be for the entire hero section, which will be pinned.
   // It's passed to the HeroSectionVideo component to use as its trigger.
@@ -124,7 +124,7 @@ export default function HomePage() {
       scrollElements.forEach((el) => observer.observe(el))
     }
 
-    // Typing animation observer
+    // Typing animation observer - Fixed to prevent infinite re-renders
     const typingObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -160,10 +160,9 @@ export default function HomePage() {
     
     // Cleanup for observers
     return () => {
-      observer.disconnect()
       typingObserver.disconnect()
     }
-  }, [hasTyped, isTyping]) // Dependencies for the typing effect
+  }, []) // Remove dependencies to prevent infinite re-renders
 
   // Separate useEffect for step tracking after component mounts
   useEffect(() => {
@@ -216,7 +215,7 @@ export default function HomePage() {
             </div>
 
             {/* The new video component is placed here, receiving the section ref */}
-            <HeroSectionVideo triggerRef={heroSectionRef} />
+            <HeroSectionVideo triggerRef={heroSectionRef as RefObject<HTMLElement>} />
           </div>
         </main>
         <div className="py-12" role="separator" aria-hidden="true"></div>
@@ -226,7 +225,7 @@ export default function HomePage() {
       <div className="bg-[#F3F7FB] md:bg-transparent">
       
       {/* AI Capabilities Showcase */}
-      <section id="features-section" className="py-20 md:py-32 scroll-reveal rounded-t-[48px] md:rounded-t-none bg-white">
+      <section id="features-section" className="py-20 md:py-32 scroll-reveal rounded-t-[48px] md:rounded-t-none bg-white md:bg-transparent">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center mb-20">
             <p className="text-[#F87171] text-sm font-medium mb-4 uppercase tracking-wider">
@@ -554,7 +553,7 @@ export default function HomePage() {
       </section>
 
       {/* Quote Section - Separate */}
-      <section className="quote-section py-20 md:py-32 scroll-reveal rounded-b-[48px] md:rounded-b-none bg-white border-t border-gray-300 md:border-t-0">
+      <section className="quote-section py-20 md:py-32 scroll-reveal rounded-b-[48px] md:rounded-b-none bg-white md:bg-transparent border-t border-gray-300 md:border-t-0">
         <div className="max-w-7xl mx-auto px-4">
           <div className="text-center">
             <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">"This could change everything."</h3>

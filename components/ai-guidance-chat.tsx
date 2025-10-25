@@ -21,12 +21,18 @@ function useTypewriter(texts: string[], delay = 30, stepDelay = 600) {
   const [displayed, setDisplayed] = useState<string[]>([""])
   const [done, setDone] = useState(false)
   const typeRef = useRef({ step: 0, char: 0, current: "" })
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null)
 
   useEffect(() => {
+    // Reset state
     setDisplayed([""])
     setDone(false)
     typeRef.current = { step: 0, char: 0, current: "" }
-    let timeout: NodeJS.Timeout
+    
+    // Clear any existing timeout
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
 
     function type() {
       const { step, char } = typeRef.current
@@ -43,22 +49,27 @@ function useTypewriter(texts: string[], delay = 30, stepDelay = 600) {
           copy[step] = typeRef.current.current
           return copy
         })
-        timeout = setTimeout(type, delay)
+        timeoutRef.current = setTimeout(type, delay)
       } else {
         typeRef.current.step++
         typeRef.current.char = 0
         typeRef.current.current = ""
         setDisplayed((prev) => [...prev, ""])
-        timeout = setTimeout(type, stepDelay)
+        timeoutRef.current = setTimeout(type, stepDelay)
       }
     }
 
     if (texts.length > 0) {
-      timeout = setTimeout(type, delay)
+      timeoutRef.current = setTimeout(type, delay)
     }
 
-    return () => clearTimeout(timeout)
-  }, [texts, delay, stepDelay])
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [texts.length, delay, stepDelay]) // Only depend on length, not the array itself
+  
   return [displayed, done] as const
 }
 
