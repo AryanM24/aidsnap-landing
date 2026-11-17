@@ -151,13 +151,13 @@ export default function Home() {
         {/* Hero: the original structure, centered text with the product below it. */}
         <Frame className="px-4 pb-14 pt-20 text-center sm:px-8 md:pt-24">
           <h1 className="rise mx-auto max-w-4xl text-[40px] font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
-            Know what to do
+            AI that saves lives
             <br />
-            <span className="text-muted-foreground">before help arrives.</span>
+            <span className="text-muted-foreground">in emergencies</span>
           </h1>
           <p className="rise mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl" style={i(1)}>
-            Tell AidSnap what happened, by text, photo or voice. It answers in clear steps, stays with you while you do
-            them, and keeps the emergency number one tap away.
+            Get instant, life-saving first aid guidance powered by AI. AidSnap provides step-by-step emergency
+            instructions when every second counts.
           </p>
         </Frame>
         <Frame>
