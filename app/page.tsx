@@ -199,11 +199,11 @@ export default function Home() {
               <li key={c.name} className="flex flex-col items-center gap-4">
                 {c.bare ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img src={c.icon} alt="" className="size-16" />
+                  <img src={c.icon} alt="" width={64} height={64} loading="lazy" decoding="async" className="size-16" />
                 ) : (
                   <span className="flex size-16 items-center justify-center overflow-hidden rounded-[22.5%] bg-white outline outline-1 -outline-offset-1 outline-black/10">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={c.icon} alt="" className={c.inset ? "size-[68%]" : "size-full"} />
+                    <img src={c.icon} alt="" width={64} height={64} loading="lazy" decoding="async" className={c.inset ? "size-[68%]" : "size-full"} />
                   </span>
                 )}
                 <span className="text-sm text-muted-foreground">{c.name}</span>

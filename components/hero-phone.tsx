@@ -1,13 +1,13 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowUp, AudioLines, ChevronLeft, ListOrdered, Menu, Phone as PhoneIcon, Plus, SquarePen } from "lucide-react"
-import { Keycap } from "@/components/site"
-import { cn } from "@/lib/utils"
+import { Keycap } from "@/components/keycap"
 
 const key = "absolute w-[3px] bg-[linear-gradient(90deg,#8d8f96,#d9dade)]"
+const cn = (...c: string[]) => c.join(" ")
+// Desktop with motion allowed is the only place the scroll animation runs, so the only place GSAP loads.
+const ANIMATE = "(min-width: 1024px) and (prefers-reduced-motion: no-preference)"
 
 /** iOS status bar glyphs: four signal bars, Wi-Fi fan, and the rounded battery with its cap. */
 function StatusIcons() {
@@ -95,9 +95,16 @@ export function HeroPhone() {
   const stage = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
-    gsap.registerPlugin(ScrollTrigger)
-    const mm = gsap.matchMedia()
-    mm.add("(min-width: 1024px) and (prefers-reduced-motion: no-preference)", () => {
+    // shortcut: decided once on load; resizing a phone-width window up to desktop shows the static phone until reload.
+    if (!window.matchMedia(ANIMATE).matches) return
+    let mm: { revert(): void } | undefined
+    let gone = false
+    Promise.all([import("gsap"), import("gsap/ScrollTrigger")]).then(([{ gsap }, { ScrollTrigger }]) => {
+      if (gone) return
+      gsap.registerPlugin(ScrollTrigger)
+      const m = gsap.matchMedia()
+      mm = m
+      m.add(ANIMATE, () => {
       const q = gsap.utils.selector(stage)
       // A beat lights up and its keycap fills as the conversation reaches it.
       const light = (n: number) => [
@@ -146,8 +153,12 @@ export function HeroPhone() {
         .to(q("[data-m='sos']"), { scale: 1, duration: 0.15 })
         .fromTo(q("[data-m='emergency']"), { xPercent: 0, x: "100%" }, { x: "0%", duration: 0.5, ease: "power3.out" })
         .to({}, { duration: 0.4 })
+      })
     })
-    return () => mm.revert()
+    return () => {
+      gone = true
+      mm?.revert()
+    }
   }, [])
 
   return (

@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react"
 import { Apple, ChevronDown, Play } from "lucide-react"
-import { cn } from "@/lib/utils"
+
+// A plain join, not cn(): tailwind-merge would add ~10 kB to every page for two class strings that never conflict.
+const cn = (...c: (string | false)[]) => c.filter(Boolean).join(" ")
 
 const PLAY_URL = "https://play.google.com/store/apps/details?id=com.aidsnap.app"
 

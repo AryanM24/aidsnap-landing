@@ -29,19 +29,7 @@ export function Mark({ className }: { className?: string }) {
   )
 }
 
-/** Signature: numbered steps sit in small mono keycaps, here and in the app, nowhere else. */
-export function Keycap({ n, active }: { n: number; active?: boolean }) {
-  return (
-    <span
-      className={cn(
-        "inline-flex size-5 shrink-0 items-center justify-center rounded-sm font-mono text-xs tabular-nums transition-colors duration-300",
-        active ? "bg-foreground text-background" : "bg-muted text-foreground",
-      )}
-    >
-      {n}
-    </span>
-  )
-}
+export { Keycap } from "@/components/keycap"
 
 /** Small squares where the rails meet a section line, echoing the viewfinder in the mark. */
 function Marks({ dark }: { dark?: boolean }) {

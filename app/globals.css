@@ -67,10 +67,10 @@
   }
 }
 
-/* The one entrance on load: a short fade and rise with a small stagger. */
+/* The one entrance on load: a short rise with a small stagger. No fade, so text is visible on the first frame
+   and the headline paints immediately (opacity 0 would hold back Largest Contentful Paint). */
 @keyframes rise {
   from {
-    opacity: 0;
     transform: translateY(8px);
   }
 }
@@ -105,6 +105,20 @@
     linear-gradient(110deg, oklch(0.8 0.07 240), oklch(0.9 0.03 230), oklch(0.76 0.08 245), oklch(0.8 0.07 240));
   background-size: 200% 100%, 200% 100%;
   animation: drift 8s linear infinite;
+}
+
+/* Where the hero animation runs, the phone starts on its welcome screen before GSAP has loaded, so nothing flashes. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  [data-m="welcome"] {
+    opacity: 1;
+  }
+  [data-m="chat"],
+  [data-cap] {
+    opacity: 0;
+  }
+  [data-beat] {
+    opacity: 0.3;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
