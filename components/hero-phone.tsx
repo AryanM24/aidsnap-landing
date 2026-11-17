@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ArrowUp, AudioLines, ListOrdered, Menu, SquarePen } from "lucide-react"
+import { ArrowUp, AudioLines, ListOrdered, Menu, Plus, SquarePen } from "lucide-react"
 import { Keycap } from "@/components/site"
 import { cn } from "@/lib/utils"
 
@@ -39,6 +39,32 @@ const beats = [
   { title: "Go one step at a time", body: "The full guide, with timers and a CPR beat." },
   { title: "Help is one tap away", body: "SOS opens your region's emergency numbers." },
 ]
+
+// The app's welcome suggestions (app/(app)/_layout.tsx).
+const suggestions = [
+  ["Someone is bleeding", "and it won't stop"],
+  ["A burn", "from a stove or hot water"],
+  ["Someone collapsed", "and isn't responding"],
+  ["Check a photo", "of a wound or rash"],
+]
+
+/** The app's composer: the input on top, attach on the left, voice and send on the right. Send is dimmed while empty. */
+function Composer() {
+  return (
+    <div className="space-y-1.5 rounded-[16px] border border-foreground/10 bg-muted/30 p-1.5">
+      <p className="px-1.5 pt-0.5 text-[13.5px] text-muted-foreground">Describe what happened</p>
+      <div className="flex items-center justify-between">
+        <Plus className="ml-1 size-[18px] text-muted-foreground" strokeWidth={1.5} />
+        <span className="flex items-center gap-2.5">
+          <AudioLines className="size-[18px] text-foreground" strokeWidth={1.5} />
+          <span className="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground opacity-50">
+            <ArrowUp className="size-3.5" strokeWidth={2} />
+          </span>
+        </span>
+      </div>
+    </div>
+  )
+}
 
 const steps = [
   ["Press firmly and directly on the wound with a clean cloth.", "Use gauze, a towel or clothing."],
@@ -81,10 +107,16 @@ export function HeroPhone() {
       const tl = gsap.timeline({
         defaults: { ease: "power2.out", duration: 0.4 },
         // Pins just under the 64px sticky header.
-        scrollTrigger: { trigger: stage.current, start: "top 64px", end: "+=1600", pin: true, scrub: 0.6 },
+        scrollTrigger: { trigger: stage.current, start: "top 64px", end: "+=1600", pin: true, scrub: 0.6, invalidateOnRefresh: true },
       })
+      // Start on the welcome screen; the chat is hidden until a suggestion is tapped.
+      gsap.set(q("[data-m='welcome']"), { opacity: 1 })
+      gsap.set(q("[data-m='chat']"), { opacity: 0 })
       tl.from(q("[data-phone]"), { rotateX: 16, scale: 0.94, duration: 1 })
         .add(light(0))
+        .to(q("[data-m='pick']"), { opacity: 1, duration: 0.2 })
+        .to(q("[data-m='welcome']"), { opacity: 0, y: -8, duration: 0.3 })
+        .to(q("[data-m='chat']"), { opacity: 1, duration: 0.3 }, "<0.1")
         .from(q("[data-m='user']"), { opacity: 0, y: 12 })
         .fromTo(q("[data-m='typing']"), { opacity: 0 }, { opacity: 1, duration: 0.2 })
         .to(q("[data-m='typing']"), { opacity: 0, duration: 0.2 }, "+=0.3")
@@ -94,7 +126,18 @@ export function HeroPhone() {
         .add(light(2))
         .from(q("[data-m='guide']"), { opacity: 0, y: 12 })
         // The thread scrolls up as the guide card arrives, like a real chat.
-        .to(q("[data-m='thread']"), { y: -96 }, "<")
+        .to(
+          q("[data-m='thread']"),
+          {
+            // Scroll exactly enough to show the guide card at the bottom of the chat.
+            y: () => {
+              const el = q("[data-m='thread']")[0] as HTMLElement
+              const view = q("[data-m='viewport']")[0] as HTMLElement
+              return -Math.max(0, el.scrollHeight - view.clientHeight + 12)
+            },
+          },
+          "<",
+        )
         .to(q("[data-m='start']"), { scale: 0.96, duration: 0.15 })
         .to(q("[data-m='start']"), { scale: 1, duration: 0.15 })
         .add(light(3))
@@ -152,10 +195,30 @@ function Phone() {
             </div>
           </div>
 
-          <div className="flex-1 overflow-hidden px-4 pt-2 text-[13px] leading-[1.45]">
+          <div className="relative flex-1 text-[13px] leading-[1.45]">
+          {/* Start screen, as in the app: the question, the composer, four suggestions. Shown first on desktop. */}
+          <div data-m="welcome" className="absolute inset-0 flex flex-col justify-center px-3 pb-12 opacity-0">
+            <p className="px-2 text-[19px] font-medium tracking-tight">What happened?</p>
+            <div className="mt-4">
+              <Composer />
+            </div>
+            <ul className="mt-3 space-y-px text-[12.5px]">
+              {suggestions.map(([title, label]) => (
+                <li key={title} className="relative flex flex-wrap gap-x-1.5 rounded-md px-2 py-1.5">
+                  {title === "Someone is bleeding" ? <span data-m="pick" className="absolute inset-0 rounded-md bg-foreground/[0.07] opacity-0" /> : null}
+                  <span className="relative">{title}</span>
+                  <span className="relative text-muted-foreground">{label}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* The chat that the tapped suggestion starts. */}
+          <div data-m="chat" className="absolute inset-0 flex flex-col">
+          <div data-m="viewport" className="flex-1 overflow-hidden px-4 pt-2">
             <div data-m="thread" className="space-y-3">
             <p data-m="user" className="ml-auto w-fit max-w-[82%] rounded-2xl bg-muted px-3.5 py-2">
-              My dad cut his hand on a kitchen knife. It won&apos;t stop bleeding.
+              Someone is bleeding and it won&apos;t stop
             </p>
             <div className="relative">
               <div data-m="typing" className="absolute left-0 top-1 flex gap-1 opacity-0">
@@ -163,7 +226,7 @@ function Phone() {
                 <span className="size-1.5 rounded-full bg-muted-foreground" />
                 <span className="size-1.5 rounded-full bg-muted-foreground" />
               </div>
-              <p data-m="intro">Press on the cut now and don&apos;t let go. Here is what to do:</p>
+              <p data-m="intro">Press on the wound now and don&apos;t let go. Here is what to do:</p>
             </div>
             <ol className="space-y-2.5">
               {steps.map(([action, detail], n) => (
@@ -190,18 +253,14 @@ function Phone() {
             </div>
             </div>
           </div>
+          <div className="shrink-0 px-2.5 pt-2">
+            <Composer />
+          </div>
+          </div>
+          </div>
 
-          <div className="shrink-0 px-2.5 pb-2 pt-2">
-            <div className="flex items-center justify-between rounded-[18px] border bg-muted/30 p-1.5 pl-3">
-              <span className="text-[13px] text-muted-foreground">Describe what happened</span>
-              <span className="flex items-center gap-2">
-                <AudioLines className="size-4 text-muted-foreground" strokeWidth={1.5} />
-                <span className="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <ArrowUp className="size-3.5" strokeWidth={2} />
-                </span>
-              </span>
-            </div>
-            <div className="mx-auto mt-2.5 h-[5px] w-[120px] rounded-full bg-foreground" />
+          <div className="shrink-0 pb-2 pt-3">
+            <div className="mx-auto h-[5px] w-[120px] rounded-full bg-foreground" />
           </div>
         </div>
       </div>

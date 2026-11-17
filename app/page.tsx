@@ -164,14 +164,12 @@ export default function Home() {
           <HeroPhone />
         </Frame>
 
-        <Frame className="px-4 py-16 text-center sm:px-8">
+        <Frame className="px-4 py-16 text-center sm:px-8 md:py-20">
           <h2 className="text-2xl font-medium tracking-tight md:text-3xl">Works with the health data you already have</h2>
           <p className="mt-3 text-muted-foreground">Off until you connect one. Disconnect any time.</p>
-        </Frame>
-        <Frame>
-          <ul className={cn(cells, "grid-cols-2 sm:grid-cols-3 lg:grid-cols-6")}>
+          <ul className="mt-12 grid grid-cols-2 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">
             {connectors.map((c) => (
-              <li key={c.name} className="flex flex-col items-center gap-4 bg-background px-4 py-10">
+              <li key={c.name} className="flex flex-col items-center gap-4">
                 <span className="flex size-16 items-center justify-center overflow-hidden rounded-[22.5%] bg-white outline outline-1 -outline-offset-1 outline-black/10">
                   {c.icon ? (
                     // eslint-disable-next-line @next/next/no-img-element
