@@ -1,6 +1,31 @@
 import type React from "react"
 import { KeyRound, Phone, ShieldOff, Trash2 } from "lucide-react"
-import { Frame, PLAY_URL, SiteFooter, SiteHeader, button } from "@/components/site"
+import { Frame, JsonLd, PLAY_URL, SITE_URL, SiteFooter, SiteHeader, button } from "@/components/site"
+
+export const metadata = { alternates: { canonical: "/" } }
+
+// What AidSnap is, for search and answer engines. Only facts the page itself states.
+const structured = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "AidSnap",
+    url: SITE_URL,
+    logo: `${SITE_URL}/android-chrome-512x512.png`,
+    sameAs: ["https://instagram.com/aidsnap", "https://linkedin.com/company/aidsnap", "https://tiktok.com/@aidsnap"],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: "AidSnap",
+    operatingSystem: "Android",
+    applicationCategory: "HealthApplication",
+    url: SITE_URL,
+    installUrl: PLAY_URL,
+    description:
+      "AI first aid assistant. Describe what happened by text, photo or voice and get clear step-by-step first aid, 16 built-in guides, a Medical ID, and the emergency number one tap away.",
+  },
+]
 import { HeroPhone } from "@/components/hero-phone"
 import { cn } from "@/lib/utils"
 
@@ -147,6 +172,7 @@ const privacy = [
 export default function Home() {
   return (
     <>
+      <JsonLd data={structured} />
       <SiteHeader />
       <main className="overflow-x-clip">
         {/* Hero: the original structure, centered text with the product below it. */}

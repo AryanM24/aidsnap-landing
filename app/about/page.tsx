@@ -1,6 +1,6 @@
 import { Page } from "@/components/site"
 
-export const metadata = { title: "About · AidSnap" }
+export const metadata = { title: "About", description: "AidSnap puts life-saving first aid knowledge in everyone's pocket, so ordinary people can act in the minutes that matter.", alternates: { canonical: "/about" } }
 
 const values = [
   ["Life first", "Every decision we make is guided by our commitment to saving and protecting human life."],

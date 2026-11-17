@@ -1,6 +1,6 @@
 import { CONTACT, Page, button } from "@/components/site"
 
-export const metadata = { title: "Careers · AidSnap" }
+export const metadata = { title: "Careers", description: "Join the team building AidSnap, first aid help for the minutes before responders arrive.", alternates: { canonical: "/careers" } }
 
 const roles = [
   { title: "Founding engineers", team: "Engineering", where: "NYC hybrid", type: "Full time", pay: "", about: "Build the core AidSnap platform with React Native, Firebase and AI integration.", skills: "React Native, Firebase, Google Cloud, AI integration, healthcare security" },

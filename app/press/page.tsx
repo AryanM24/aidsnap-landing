@@ -1,7 +1,7 @@
 import { ArrowUpRight } from "lucide-react"
 import { Page } from "@/components/site"
 
-export const metadata = { title: "Press · AidSnap" }
+export const metadata = { title: "Press", description: "News coverage of AidSnap, the AI first aid assistant.", alternates: { canonical: "/press" } }
 
 const articles = [
   {

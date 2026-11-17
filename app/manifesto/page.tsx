@@ -1,6 +1,6 @@
 import { Page } from "@/components/site"
 
-export const metadata = { title: "Manifesto · AidSnap" }
+export const metadata = { title: "Manifesto", description: "Why AidSnap exists: no one should ever feel powerless when it matters most.", alternates: { canonical: "/manifesto" } }
 
 export default function Manifesto() {
   return (

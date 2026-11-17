@@ -1,7 +1,7 @@
 import { ChevronDown } from "lucide-react"
-import { CONTACT, Page } from "@/components/site"
+import { CONTACT, JsonLd, Page } from "@/components/site"
 
-export const metadata = { title: "Support · AidSnap" }
+export const metadata = { title: "Support", description: "Answers to common questions about AidSnap: where answers come from, calling for help, privacy and deleting your data.", alternates: { canonical: "/support" } }
 
 const faqs = [
   {
@@ -33,6 +33,13 @@ const faqs = [
 export default function Support() {
   return (
     <Page title="Support" lead="Answers to common questions. For anything else, email us.">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          mainEntity: faqs.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+        }}
+      />
       <div className="divide-y border-y">
         {faqs.map((f) => (
           <details key={f.q} className="group">

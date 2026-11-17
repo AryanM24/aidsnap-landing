@@ -1,6 +1,6 @@
 import { Page, PLAY_URL, button } from "@/components/site"
 
-export const metadata = { title: "iOS · AidSnap" }
+export const metadata = { title: "AidSnap for iPhone", description: "AidSnap is on Android today. The iPhone app is coming soon.", alternates: { canonical: "/coming-soon" } }
 
 export default function ComingSoon() {
   return (

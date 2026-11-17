@@ -2,6 +2,7 @@ import type React from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 
+export const SITE_URL = "https://www.aidsnap.com"
 export const PLAY_URL = "https://play.google.com/store/apps/details?id=com.aidsnap.app"
 export const CONTACT = "mailto:aryan.mittal@aidsnap.com"
 
@@ -10,6 +11,11 @@ const base =
 export const button = {
   primary: cn(base, "bg-primary text-primary-foreground hover:bg-primary/90"),
   secondary: cn(base, "bg-muted text-foreground hover:bg-foreground/10"),
+}
+
+/** Structured data for search and answer engines. `<` is escaped so no string can close the script tag. */
+export function JsonLd({ data }: { data: object }) {
+  return <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(data).replace(/</g, "\\u003c") }} />
 }
 
 /** The AidSnap mark: a viewfinder around a cross, drawn in the current text color. */
@@ -63,6 +69,7 @@ export function Frame({ children, className, id, dark }: { children: React.React
 }
 
 const nav = [
+  { href: "/guides", label: "Guides" },
   { href: "/manifesto", label: "Manifesto" },
   { href: "/about", label: "About" },
   { href: "/support", label: "Support" },
@@ -101,6 +108,7 @@ const columns = [
     title: "Product",
     links: [
       { href: "/#features", label: "Features" },
+      { href: "/guides", label: "First aid guides" },
       { href: PLAY_URL, label: "Android" },
       { href: "/coming-soon", label: "iOS" },
     ],
@@ -120,6 +128,7 @@ const columns = [
       { href: "/support", label: "Support" },
       { href: "/privacy", label: "Privacy" },
       { href: "/terms", label: "Terms" },
+      { href: "/delete-account", label: "Delete account" },
       { href: CONTACT, label: "Contact" },
     ],
   },
