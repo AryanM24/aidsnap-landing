@@ -1,5 +1,5 @@
 import type React from "react"
-import { Heart, KeyRound, Phone, ShieldOff, Trash2 } from "lucide-react"
+import { KeyRound, Phone, ShieldOff, Trash2 } from "lucide-react"
 import { Frame, PLAY_URL, SiteFooter, SiteHeader, button } from "@/components/site"
 import { HeroPhone } from "@/components/hero-phone"
 import { cn } from "@/lib/utils"
@@ -25,7 +25,8 @@ function Heading({ a, b, className }: { a: string; b?: string; className?: strin
 const cells = "grid gap-px bg-border"
 
 const connectors = [
-  { name: "Apple Health", icon: null },
+  // Apple's HIG: show the Health icon exactly as supplied, with no mask, border or backing.
+  { name: "Apple Health", icon: "/connectors/apple-health.png", bare: true },
   { name: "Health Connect", icon: "/connectors/health-connect.png", inset: true },
   { name: "WHOOP", icon: "/connectors/whoop.png" },
   { name: "Oura", icon: "/connectors/oura.png" },
@@ -170,14 +171,15 @@ export default function Home() {
           <ul className="mt-12 grid grid-cols-2 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">
             {connectors.map((c) => (
               <li key={c.name} className="flex flex-col items-center gap-4">
-                <span className="flex size-16 items-center justify-center overflow-hidden rounded-[22.5%] bg-white outline outline-1 -outline-offset-1 outline-black/10">
-                  {c.icon ? (
-                    // eslint-disable-next-line @next/next/no-img-element
+                {c.bare ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={c.icon} alt="" className="size-16" />
+                ) : (
+                  <span className="flex size-16 items-center justify-center overflow-hidden rounded-[22.5%] bg-white outline outline-1 -outline-offset-1 outline-black/10">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={c.icon} alt="" className={c.inset ? "size-[68%]" : "size-full"} />
-                  ) : (
-                    <Heart className="size-7 text-zinc-500" strokeWidth={1.5} />
-                  )}
-                </span>
+                  </span>
+                )}
                 <span className="text-sm text-muted-foreground">{c.name}</span>
               </li>
             ))}

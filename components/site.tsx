@@ -149,14 +149,14 @@ export function SiteFooter() {
     <footer className="overflow-hidden bg-ink text-white">
       <Frame dark className="grid gap-12 px-4 pb-16 pt-20 sm:px-6 md:grid-cols-[1fr_auto]">
         <div className="max-w-sm space-y-6">
+          <Link href="/" className="flex w-fit items-center gap-2 text-[17px] font-medium tracking-tight">
+            <Mark className="size-6" />
+            AidSnap
+          </Link>
           <p className="text-2xl font-medium leading-snug tracking-tight">
             Made for the minutes
             <br />
             <span className="text-white/50">before help arrives.</span>
-          </p>
-          <p className="flex items-start gap-2 text-sm text-white/60">
-            <span className="mt-1.5 size-2 shrink-0 rounded-full bg-signal" />
-            First aid guidance, not a diagnosis. In an emergency, call your local emergency number first.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-16">
