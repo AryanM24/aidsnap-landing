@@ -1,15 +1,15 @@
-import type { Metadata } from "next"
+import { meta } from "@/lib/seo"
 import Link from "next/link"
 import { ChevronRight } from "lucide-react"
 import { GUIDES, URGENCY_LABEL, type Urgency } from "@/lib/guides"
 import { JsonLd, Page, SITE_URL } from "@/components/site"
 
-export const metadata: Metadata = {
+export const metadata = meta({
   title: "First aid guides",
   description:
-    "Step-by-step first aid for 16 emergencies, from CPR and choking to burns and severe bleeding. Based on AHA, Red Cross, ERC and NHS guidance.",
-  alternates: { canonical: "/guides" },
-}
+    "Free step-by-step first aid for 16 emergencies, including CPR, choking, severe bleeding, heart attack, stroke, burns and seizures. Based on AHA, Red Cross, ERC and NHS guidance.",
+  path: "/guides",
+})
 
 const order: Urgency[] = ["life-threatening", "soon", "everyday"]
 

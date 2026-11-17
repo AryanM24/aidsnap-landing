@@ -29,6 +29,25 @@ ${GUIDES.map((g) => `- [${g.title}](${SITE_URL}/guides/${g.id}): ${g.summary} ($
 - [Consumer health data privacy policy](${SITE_URL}/consumer-health-data)
 - [Delete your account](${SITE_URL}/delete-account)
 - [Manifesto](${SITE_URL}/manifesto)
+- [About](${SITE_URL}/about)
+
+## Optional
+- [Full site as one Markdown document](${SITE_URL}/llms-full.txt)
+- [Guides as JSON](${SITE_URL}/guides.json)
+- [Guides RSS feed](${SITE_URL}/feed.xml)
+
+## Markdown
+Every page below also has a Markdown version at the same URL with .md added.
+- [Home](${SITE_URL}/index.md)
+- [First aid guides](${SITE_URL}/guides.md)
+${GUIDES.map((g) => `- [${g.title}](${SITE_URL}/guides/${g.id}.md)`).join("\n")}
+- [Support and FAQ](${SITE_URL}/support.md)
+- [Privacy policy](${SITE_URL}/privacy.md)
+- [Terms of service](${SITE_URL}/terms.md)
+- [Consumer health data privacy policy](${SITE_URL}/consumer-health-data.md)
+- [Delete your account](${SITE_URL}/delete-account.md)
+- [About](${SITE_URL}/about.md)
+- [Manifesto](${SITE_URL}/manifesto.md)
 `
   return new Response(body, { headers: { "Content-Type": "text/plain; charset=utf-8" } })
 }

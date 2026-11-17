@@ -1,11 +1,14 @@
+import { meta } from "@/lib/seo"
 import { ArrowUpRight } from "lucide-react"
 import { Page } from "@/components/site"
 
-export const metadata = {
+export const metadata = meta({
   title: "Press",
-  description: "News coverage of AidSnap, the AI first aid assistant.",
-  alternates: { canonical: "/press" },
-}
+  description:
+    "News coverage of AidSnap, the AI first aid app created by Edison High School students.",
+  path: "/press",
+  markdown: false,
+})
 
 const article = {
   year: "2025",

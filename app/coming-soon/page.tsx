@@ -1,6 +1,13 @@
+import { meta } from "@/lib/seo"
 import { Page, PLAY_URL, button } from "@/components/site"
 
-export const metadata = { title: "AidSnap for iPhone", description: "AidSnap is on Android today. The iPhone app is coming soon.", alternates: { canonical: "/coming-soon" } }
+export const metadata = meta({
+  title: "AidSnap for iPhone",
+  description:
+    "AidSnap, the AI first aid assistant, is available on Android today. The iPhone app is coming soon.",
+  path: "/coming-soon",
+  markdown: false,
+})
 
 export default function ComingSoon() {
   return (

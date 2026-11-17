@@ -5,6 +5,7 @@ import { Ban } from "lucide-react"
 import { GUIDES, getGuide } from "@/lib/guides"
 import { Frame, JsonLd, Keycap, PLAY_URL, SITE_URL, button , Shell } from "@/components/site"
 import { cn } from "@/lib/utils"
+import { meta } from "@/lib/seo"
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb"
 
 export const dynamicParams = false
@@ -16,12 +17,13 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const g = getGuide((await params).id)
   if (!g) return {}
-  return {
+  return meta({
     title: `${g.title}: first aid steps`,
     description: `${g.summary} When to call emergency services, what to do step by step, and what not to do.`,
-    alternates: { canonical: `/guides/${g.id}` },
-    openGraph: { title: `${g.title}: first aid steps`, description: g.summary, url: `/guides/${g.id}`, type: "article" },
-  }
+    path: `/guides/${g.id}`,
+    type: "article",
+    image: `/guides/${g.id}/opengraph-image`,
+  })
 }
 
 function List({ title, items, className }: { title: string; items: string[]; className?: string }) {
@@ -56,6 +58,9 @@ export default async function GuidePage({ params }: { params: Promise<{ id: stri
           about: { "@type": "MedicalCondition", name: g.title },
           audience: { "@type": "MedicalAudience", audienceType: "Patient" },
           citation: g.source,
+          inLanguage: "en",
+          dateModified: "2026-11-17",
+          isAccessibleForFree: true,
           publisher: { "@type": "Organization", name: "AidSnap", url: SITE_URL },
           mainEntity: {
             "@type": "HowTo",

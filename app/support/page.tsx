@@ -1,34 +1,16 @@
+import { meta } from "@/lib/seo"
+import { FAQS } from "@/lib/faq"
 import { ChevronDown } from "lucide-react"
 import { CONTACT, JsonLd, Page } from "@/components/site"
 
-export const metadata = { title: "Support", description: "Answers to common questions about AidSnap: where answers come from, calling for help, privacy and deleting your data.", alternates: { canonical: "/support" } }
+export const metadata = meta({
+  title: "Support and FAQ",
+  description:
+    "AidSnap help and FAQ: where answers come from, whether it can call for you, offline use, what happens to your data, and how to delete your account.",
+  path: "/support",
+})
 
-const faqs = [
-  {
-    q: "Does AidSnap replace emergency services?",
-    a: "No. AidSnap gives first aid guidance, not a diagnosis. If someone may be in danger, call your local emergency number first, then follow the steps while you wait.",
-  },
-  {
-    q: "Where do the answers come from?",
-    a: "AidSnap uses Google Gemini, guided by 16 first aid guides based on AHA, Red Cross and NHS guidance. Like any AI it can make mistakes, so follow the guide steps and trust the responders.",
-  },
-  {
-    q: "Can AidSnap call for me?",
-    a: "No. It shows the right emergency number for your region, and you tap to call. It asks once before dialing, so a call never happens by accident.",
-  },
-  {
-    q: "Does it work without internet?",
-    a: "Chat and Live need a connection. The first aid guides are built into the app.",
-  },
-  {
-    q: "What happens to my information?",
-    a: "What you ask is sent to Google Gemini to get an answer. Health data from Apple Health, Health Connect or a wearable is read only when you ask about it. You can delete what AidSnap remembers in Settings, and delete your account in the app.",
-  },
-  {
-    q: "Can AidSnap replace a first aid course?",
-    a: "No. AidSnap is designed to help in the moment, not to replace proper training. We strongly recommend a certified first aid and CPR course.",
-  },
-]
+const faqs = FAQS.map(([q, a]) => ({ q, a }))
 
 export default function Support() {
   return (

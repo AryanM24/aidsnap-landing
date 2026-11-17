@@ -1,11 +1,12 @@
-import type { Metadata } from "next"
+import { meta } from "@/lib/seo"
 import { CONTACT, Keycap, Page } from "@/components/site"
 
-export const metadata: Metadata = {
+export const metadata = meta({
   title: "Delete your account",
-  description: "How to delete your AidSnap account and everything stored with it, in the app or by email.",
-  alternates: { canonical: "/delete-account" },
-}
+  description:
+    "How to delete your AidSnap account and everything stored with it, in the app or by email, and exactly what gets deleted.",
+  path: "/delete-account",
+})
 
 const steps = ["Open AidSnap and tap the menu.", "Go to Settings, then Account.", "Tap Delete account and enter your password to confirm."]
 
