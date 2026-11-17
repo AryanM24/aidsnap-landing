@@ -2,61 +2,38 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96%;
-    --secondary-foreground: 222.2 84% 4.9%;
-    --muted: 210 40% 96%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96%;
-    --accent-foreground: 222.2 84% 4.9%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
-    --chart-1: 12 76% 61%;
-    --chart-2: 173 58% 39%;
-    --chart-3: 197 37% 24%;
-    --chart-4: 43 74% 66%;
-    --chart-5: 27 87% 67%;
-  }
+/* AidSnap tokens, from the app's DESIGN.md (assistant-ui zinc ramp). Channels only, so Tailwind can add alpha. */
+:root {
+  --background: 1 0 0;
+  --foreground: 0.141 0.005 285.823;
+  --card: 1 0 0;
+  --muted: 0.967 0.001 286.375;
+  --muted-foreground: 0.552 0.016 285.938;
+  --primary: 0.21 0.006 285.885;
+  --primary-foreground: 0.985 0 0;
+  --signal: 0.577 0.22 25;
+  --signal-foreground: 0.985 0 0;
+  --positive: 0.6 0.13 155;
+  --border: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.705 0.015 286.067);
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  color-scheme: light;
+}
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --radius: 0.5rem;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: 0.141 0.005 285.823;
+    --foreground: 0.985 0 0;
+    --card: 0.21 0.006 285.885;
+    --muted: 0.274 0.006 286.033;
+    --muted-foreground: 0.705 0.015 286.067;
+    --primary: 0.92 0.004 286.32;
+    --primary-foreground: 0.21 0.006 285.885;
+    --signal: 0.66 0.21 25;
+    --positive: 0.74 0.14 155;
+    --border: oklch(1 0 0 / 10%);
+    --ring: oklch(0.552 0.016 285.938);
+    color-scheme: dark;
   }
 }
 
@@ -64,481 +41,74 @@
   * {
     @apply border-border;
   }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-sans text-foreground;
+  }
+  ::selection {
+    background: oklch(var(--foreground) / 0.12);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
 }
 
-/* Medical gradient background */
-.bg-gradient-medical {
-  background: linear-gradient(
-    135deg,
-    #fefefe 0%,
-    #f8fafc 15%,
-    #f1f5f9 30%,
-    #e2e8f0 45%,
-    #f0f4f8 60%,
-    #f8fafc 75%,
-    #fefefe 90%,
-    #f9fafb 100%
-  );
-  background-attachment: fixed;
-  min-height: 100vh;
-}
-
-/* Custom animations */
-@keyframes float {
-  0%,
-  100% {
-    transform: translateY(0px);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes fadeInUp {
+/* The one entrance on load: a short fade and rise with a small stagger. */
+@keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+    transform: translateY(8px);
   }
 }
-
-@keyframes scrollReveal {
-  from {
-    opacity: 0;
-    transform: translateY(50px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+.rise {
+  animation: rise 600ms var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 80ms);
 }
 
-@keyframes liquidRipple {
-  0% {
-    transform: scale(0);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(4);
-    opacity: 0;
-  }
-}
-
-@keyframes liquidPulse {
+/* CPR metronome: one beat at 110 a minute, the same rate as the app. */
+@keyframes beat {
   0%,
   100% {
     transform: scale(1);
   }
-  50% {
-    transform: scale(1.05);
+  12% {
+    transform: scale(0.88);
   }
 }
-
-.float-animation {
-  animation: float 6s ease-in-out infinite;
+.beat {
+  animation: beat calc(60s / 110) var(--ease) infinite;
 }
 
-.fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
-}
-
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(50px);
-  transition: all 0.8s ease-out;
-}
-
-.scroll-reveal.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.backdrop-blur-custom {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-}
-
-/* Liquid Glass Container */
-.liquid-container {
-  position: relative;
-  overflow: hidden;
-  transition: all 0.1s cubic-bezier(0.23, 1, 0.32, 1);
-  will-change: transform, border-radius;
-}
-
-/* Background layer - contains ALL blur effects */
-.liquid-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: transparent;
-  backdrop-filter: blur(12px) saturate(150%);
-  -webkit-backdrop-filter: blur(12px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  z-index: 1;
-  will-change: transform, border-radius;
-}
-
-.liquid-background::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: radial-gradient(
-    circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
-    rgba(255, 255, 255, 0.2) 0%,
-    rgba(255, 255, 255, 0.1) 20%,
-    rgba(255, 255, 255, 0.05) 40%,
-    transparent 70%
-  );
-  pointer-events: none;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.liquid-container:hover .liquid-background::before {
-  opacity: 1;
-}
-
-.liquid-background::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.1) 50%, transparent 70%);
-  background-size: 200% 200%;
-  background-position: var(--shimmer-x, -100%) var(--shimmer-y, -100%);
-  pointer-events: none;
-  z-index: 2;
-  opacity: 0;
-  transition: all 0.3s ease;
-}
-
-.liquid-container:hover .liquid-background::after {
-  opacity: 1;
-  background-position: 100% 100%;
-}
-
-/* Content layer - NO blur effects whatsoever */
-.liquid-content {
-  position: relative;
-  z-index: 10;
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
-  filter: none;
-  pointer-events: auto;
-}
-
-/* Ensure all child elements have no blur */
-.liquid-content *,
-.liquid-content *::before,
-.liquid-content *::after {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
-  filter: none !important;
-}
-
-/* Specific background styles for different variants */
-.liquid-glass-navbar .liquid-background {
-  background: rgba(18, 18, 18, 0.1);
-  backdrop-filter: blur(21px) saturate(150%);
-  -webkit-backdrop-filter: blur(21px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-}
-
-/* Enhanced light navbar style for gradient background */
-.liquid-glass-navbar-light .liquid-background {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(21px) saturate(150%);
-  -webkit-backdrop-filter: blur(21px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.9);
-}
-
-/* Darker background for regular glassmorphism cards */
-.liquid-glass-card .liquid-background {
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.4);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.5);
-}
-
-.liquid-glass-floating .liquid-background {
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(18px) saturate(150%);
-  -webkit-backdrop-filter: blur(18px) saturate(150%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
-.liquid-glass-mockup .liquid-background {
-  background: rgba(255, 255, 255, 0.25);
-  backdrop-filter: blur(15px) saturate(120%);
-  -webkit-backdrop-filter: blur(15px) saturate(120%);
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.4);
-}
-
-.liquid-glass-download .liquid-background {
-  background: rgba(241, 245, 249, 0.1);
-  backdrop-filter: blur(20px) saturate(130%);
-  -webkit-backdrop-filter: blur(20px) saturate(130%);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.05), inset 0 1px 0 rgba(255, 255, 255, 0.3);
-}
-
-/* Ripple effects */
-.liquid-ripple {
-  position: absolute;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 50%, transparent 100%);
-  pointer-events: none;
-  animation: liquidRipple 0.8s ease-out forwards;
-  z-index: 5;
-}
-
-/* SVG Filter for blob effect - only affects background */
-.liquid-svg-filter {
-  position: absolute;
-  width: 0;
-  height: 0;
-  pointer-events: none;
-}
-
-.liquid-blob .liquid-background {
-  filter: url(#liquid-filter);
-}
-
-/* Legacy classes for backward compatibility */
-.liquid-glass {
-  @apply liquid-container;
-}
-
-.liquid-morph {
-  transition: all 0.1s cubic-bezier(0.23, 1, 0.32, 1);
-  transform-origin: center;
-  will-change: transform, border-radius, box-shadow;
-}
-
-/* Mobile-specific styles */
-@media (max-width: 767px) {
-  /* Disable GSAP scroll animations on mobile */
-  .hero-section {
-    position: relative !important;
-    pin-spacer: none !important;
-  }
-  
-  /* Remove ALL blur effects from hero section on mobile - comprehensive */
-  .hero-section,
-  .hero-section *,
-  .hero-section *::before,
-  .hero-section *::after,
-  .hero-section main,
-  .hero-section main *,
-  .hero-section main *::before,
-  .hero-section main *::after,
-  .hero-section .text-center,
-  .hero-section .text-center *,
-  .hero-section .space-y-8,
-  .hero-section .space-y-8 *,
-  .hero-section .space-y-6,
-  .hero-section .space-y-6 *,
-  .hero-section h1,
-  .hero-section p,
-  .hero-section div {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    filter: none !important;
-    background-filter: none !important;
-    -webkit-background-filter: none !important;
-  }
-  
-  /* Ensure hero section has solid background on mobile */
-  .hero-section {
-    background: #F3F7FB !important;
-  }
-  
-  /* Nuclear option - remove all possible blur sources on mobile */
-  body,
-  html,
-  #__next,
-  .bg-gradient-medical {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    filter: none !important;
-  }
-  
-  /* Disable any glassmorphism effects on mobile */
-  .liquid-glass,
-  .liquid-container,
-  .liquid-background {
-    backdrop-filter: none !important;
-    -webkit-backdrop-filter: none !important;
-    background: transparent !important;
-  }
-  
-  /* Ensure navbar stays fixed on mobile */
-  .navbar-mobile {
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    right: 0 !important;
-    transform: none !important;
-  }
-  
-  /* Side menu animation */
-  .mobile-menu-enter {
-    transform: translateX(100%);
-  }
-  
-  .mobile-menu-enter-active {
-    transform: translateX(0);
-    transition: transform 300ms ease-out;
-  }
-  
-  .mobile-menu-exit {
-    transform: translateX(0);
-  }
-  
-  .mobile-menu-exit-active {
-    transform: translateX(100%);
-    transition: transform 300ms ease-out;
-  }
-  
-  /* Prevent body scroll when mobile menu is open */
-  body.mobile-menu-open {
-    overflow: hidden !important;
-    position: fixed !important;
-    width: 100% !important;
-    height: 100% !important;
-  }
-  
-  /* Mobile menu overlay */
-  .mobile-menu-overlay {
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-  }
-  
-  /* Adjust hero section padding and spacing on mobile */
-  .hero-section {
-    padding: 0 !important;
-    margin: 0 !important;
-  }
-  
-  .hero-section main {
-    padding-top: 7rem !important; /* Account for fixed navbar */
-    padding-bottom: 4rem !important;
-    padding-left: 1rem !important;
-    padding-right: 1rem !important;
-  }
-  
-  /* Better spacing for hero content on mobile */
-  .hero-section .space-y-8 > * + * {
-    margin-top: 2rem !important;
-  }
-  
-  .hero-section .space-y-6 > * + * {
-    margin-top: 1.5rem !important;
-  }
-  
-  /* Remove scroll-based transforms on mobile */
-  .scroll-reveal {
-    transform: none !important;
-    opacity: 1 !important;
-  }
-  
-  /* Mobile sidebar styling */
-  .mobile-side-menu {
-    z-index: 9999 !important;
-    background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%) !important;
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
-    box-shadow: -10px 0 25px -5px rgba(0, 0, 0, 0.1), -20px 0 60px -15px rgba(0, 0, 0, 0.2) !important;
-  }
-  
-  .mobile-menu-backdrop {
-    z-index: 9998 !important;
-    background: rgba(0, 0, 0, 0.6) !important;
-    backdrop-filter: blur(8px) !important;
-    -webkit-backdrop-filter: blur(8px) !important;
-  }
-  
-  /* Sidebar content styling */
-  .mobile-side-menu .space-y-6 > button,
-  .mobile-side-menu .space-y-6 > a {
-    border-radius: 12px;
-    padding: 16px 12px !important;
-    margin: 0 -12px;
-    transition: all 0.2s ease-in-out;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
-  }
-  
-  .mobile-side-menu .space-y-6 > button:hover,
-  .mobile-side-menu .space-y-6 > a:hover {
-    background: rgba(248, 113, 113, 0.05) !important;
-    color: #F87171 !important;
-    transform: translateX(4px);
-  }
-  
-  .mobile-side-menu .space-y-6 > button:last-of-type {
-    border-bottom: none !important;
-  }
-  
-  /* Fix mobile navbar z-index */
-  header {
-    z-index: 1000 !important;
-  }
-  
-  /* Make sidebar more fluid */
-  .mobile-side-menu {
-    transform: translateX(0) !important;
-    animation: slideInFromRight 0.3s ease-out;
-  }
-  
-  @keyframes slideInFromRight {
-    from {
-      transform: translateX(100%);
-      opacity: 0;
-    }
-    to {
-      transform: translateX(0);
-      opacity: 1;
-    }
-  }
-  
-  /* Better mobile menu button styling */
-  .mobile-side-menu .flex.justify-between.items-center {
-    padding-bottom: 2rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    margin-bottom: 2rem;
+/* The Live orb: a small sky that drifts, as in the app. */
+@keyframes drift {
+  to {
+    background-position: -200% 50%, 200% 50%;
   }
 }
+.orb {
+  background:
+    radial-gradient(ellipse 60% 35% at 40% 60%, oklch(0.97 0.01 240 / 0.7), transparent 70%),
+    linear-gradient(110deg, oklch(0.8 0.07 240), oklch(0.9 0.03 230), oklch(0.76 0.08 245), oklch(0.8 0.07 240));
+  background-size: 200% 100%, 200% 100%;
+  animation: drift 8s linear infinite;
+}
 
-/* Desktop-only animations */
-@media (min-width: 768px) {
-  .scroll-reveal {
-    opacity: 0;
-    transform: translateY(50px);
-    transition: all 0.8s ease-out;
-  }
-  
-  .scroll-reveal.revealed {
-    opacity: 1;
-    transform: translateY(0);
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .beat,
+  .orb {
+    animation: none;
   }
 }

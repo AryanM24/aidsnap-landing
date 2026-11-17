@@ -1,794 +1,301 @@
-"use client"
+import type React from "react"
+import { ArrowUp, AudioLines, ChevronRight, ListOrdered, Menu, Phone, SquarePen } from "lucide-react"
+import { Keycap, PLAY_URL, SiteFooter, SiteHeader, button } from "@/components/site"
+import { ScrubLine, Steps } from "@/components/home-motion"
+import { cn } from "@/lib/utils"
 
-import Image from "next/image"
-import Link from "next/link"
-import { Shield, Camera, Mic, Phone } from "lucide-react"
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import { LiquidGlass } from "@/components/liquid-glass"
-import { useEffect, useState, useRef, RefObject } from "react"
-import { InjuryAnalysis } from "@/components/injury-analysis"
-import { EnvironmentAnalysis } from "@/components/environment-analysis"
-import { TypewriterGuidance } from "@/components/typewriter-guidance"
-import { AIGuidanceChat } from "@/components/ai-guidance-chat"
-import { OfflineIndicator } from "@/components/offline-indicator"
-import { CalmInterface } from "@/components/calm-interface"
-import { HeroSectionVideo } from "@/components/hero-section-video" // Import the new component
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel"
+const i = (n: number) => ({ "--i": n }) as React.CSSProperties
 
-import { gsap } from "gsap"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-
-// Register ScrollTrigger plugin
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger)
+/** Two-tone heading: the claim in ink, the second line in muted. */
+function Heading({ a, b, className }: { a: string; b: string; className?: string }) {
+  return (
+    <h2 className={cn("text-3xl font-medium leading-tight tracking-tight md:text-5xl", className)}>
+      {a}
+      <br />
+      <span className="text-muted-foreground">{b}</span>
+    </h2>
+  )
 }
 
-export default function HomePage() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [isTyping, setIsTyping] = useState(false)
-  const [hasTyped, setHasTyped] = useState(false)
-  const [typedText, setTypedText] = useState("")
-  const [activeStep, setActiveStep] = useState(0)
-  const typingRef = useRef<HTMLHeadingElement>(null)
-  
-  // This ref will be for the entire hero section, which will be pinned.
-  // It's passed to the HeroSectionVideo component to use as its trigger.
-  const heroSectionRef = useRef<HTMLElement>(null)
-
-  useEffect(() => {
-    setIsVisible(true)
-
-    // Mobile-specific GSAP scroll animations
-    if (typeof window !== "undefined" && window.innerWidth < 768) {
-      // Animate scroll-reveal elements on mobile
-      gsap.utils.toArray(".scroll-reveal").forEach((element: any) => {
-        gsap.fromTo(
-          element,
-          {
-            opacity: 0,
-            y: 50,
-          },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            scrollTrigger: {
-              trigger: element,
-              start: "top 80%",
-              end: "bottom 20%",
-              toggleActions: "play none none reverse",
-            },
-          }
-        )
-      })
-
-      // Enhanced animations for specific sections on mobile
-      gsap.fromTo(
-        "#features-section",
-        {
-          opacity: 0,
-          y: 100,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 1,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: "#features-section",
-            start: "top 70%",
-            end: "bottom 30%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      )
-
-      // Quote section animation on mobile
-      gsap.fromTo(
-        ".quote-section",
-        {
-          opacity: 0,
-          y: 80,
-        },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: "power2.out",
-          scrollTrigger: {
-            trigger: ".quote-section",
-            start: "top 80%",
-            end: "bottom 20%",
-            toggleActions: "play none none reverse",
-          },
-        }
-      )
-    } else {
-      // Desktop: Use CSS-based scroll reveal
-      const observerOptions = {
-        threshold: 0.1,
-        rootMargin: "0px 0px -50px 0px",
-      }
-
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add("revealed")
-          }
-        })
-      }, observerOptions)
-
-      const scrollElements = document.querySelectorAll(".scroll-reveal")
-      scrollElements.forEach((el) => observer.observe(el))
-    }
-
-    // Typing animation observer - Fixed to prevent infinite re-renders
-    const typingObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && !isTyping && !hasTyped) {
-            setIsTyping(true)
-            const fullText = "It's like your mom.\nExcept it won't kiss your boo-boos."
-            let currentIndex = 0
-
-            const typeText = () => {
-              if (currentIndex < fullText.length) {
-                setTypedText(fullText.slice(0, currentIndex + 1))
-                currentIndex++
-                setTimeout(typeText, 50)
-              } else {
-                setHasTyped(true)
-                setIsTyping(false)
-                typingObserver.disconnect()
-              }
-            }
-            typeText()
-          }
-        })
-      },
-      {
-        threshold: 0.3,
-        rootMargin: "0px 0px -20% 0px",
-      },
-    )
-
-    if (typingRef.current) {
-      typingObserver.observe(typingRef.current)
-    }
-    
-    // Cleanup for observers
-    return () => {
-      typingObserver.disconnect()
-    }
-  }, []) // Remove dependencies to prevent infinite re-renders
-
-  // Separate useEffect for step tracking after component mounts
-  useEffect(() => {
-    const stepObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const stepIndex = Number.parseInt(entry.target.getAttribute("data-step") || "0")
-            setActiveStep(stepIndex)
-          }
-        })
-      },
-      {
-        threshold: 0.5,
-        rootMargin: "-20% 0px -20% 0px",
-      },
-    )
-
-    // Observe step elements
-    const stepElements = document.querySelectorAll(".step-section")
-    stepElements.forEach((el) => stepObserver.observe(el))
-
-    return () => {
-      stepObserver.disconnect()
-    }
-  }, []) // Run once after component mounts
-
+/** The bright element: AidSnap's chat, answering with the real Severe bleeding guide. */
+function ChatPreview() {
+  const steps = [
+    ["Press firmly and directly on the wound with a clean cloth.", "Use gauze, a towel or clothing."],
+    ["Keep pressing hard without lifting to check.", "Hold steady pressure for at least 10 minutes."],
+    ["If blood soaks through, add more cloth on top and press harder.", "Leave the first layer in place."],
+  ]
   return (
-    <div className="bg-gradient-medical text-gray-900 min-h-screen">
-      <Navbar />
-
-      {/* Hero Section - The ref is attached here */}
-      <section ref={heroSectionRef} className="hero-section relative bg-[#F3F7FB]">
-        <div className="py-12" role="separator" aria-hidden="true"></div>
-        <main className="max-w-7xl mx-auto px-4 pt-40 pb-40 md:pt-56 md:pb-32">
-          <div
-            className={`text-center space-y-8 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-          >
-            {/* Main Heading */}
-            <div className="space-y-6">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-normal text-gray-900 leading-tight">
-                AI that saves lives
-                <br />
-                <span className="text-[#F87171]">in emergencies</span>
-              </h1>
-              <p className="text-lg md:text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
-                Get instant, life-saving first aid guidance powered by AI. AidSnap provides step-by-step emergency
-                instructions when every second counts.
-              </p>
-            </div>
-
-            {/* The new video component is placed here, receiving the section ref */}
-            <HeroSectionVideo triggerRef={heroSectionRef as RefObject<HTMLElement>} />
-          </div>
-        </main>
-        <div className="py-12" role="separator" aria-hidden="true"></div>
-      </section>
-
-      {/* Main Content Container */}
-      <div className="bg-[#F3F7FB] md:bg-transparent">
-      
-      {/* AI Capabilities Showcase */}
-      <section id="features-section" className="py-20 md:py-32 scroll-reveal rounded-t-[48px] md:rounded-t-none bg-white md:bg-transparent">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-20">
-            <p className="text-[#F87171] text-sm font-medium mb-4 uppercase tracking-wider">
-              The Turning Point of Emergency Care
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Instant AI-powered emergency
-              <br />
-              response when seconds count.
-            </h2>
-          </div>
-
-          {/* Mobile Carousel */}
-          <div className="md:hidden">
-            <Carousel className="w-full" opts={{ align: "start" }}>
-              <CarouselContent className="-ml-2">
-                <CarouselItem className="pl-2 basis-[85%]">
-                  <div className="bg-white/30 backdrop-blur-sm border border-white/20 rounded-2xl p-6 h-full">
-                    <div className="space-y-6 h-full flex flex-col">
-                      <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                        <InjuryAnalysis />
-                      </div>
-                      <div className="space-y-3 flex-1">
-                        <div className="text-left">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                            Analyze visual injuries with QuickSnap
-                          </h3>
-                          <p className="text-gray-600 leading-relaxed">
-                            AidSnap's QuickSnap feature instantly analyzes wounds, burns, cuts, and symptoms through your
-                            camera — providing immediate assessment and treatment guidance for any visible injury.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-                <CarouselItem className="pl-2 basis-[85%]">
-                  <div className="bg-white/30 backdrop-blur-sm border border-white/20 rounded-2xl p-6 h-full">
-                    <div className="space-y-6 h-full flex flex-col">
-                      <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                        <EnvironmentAnalysis />
-                      </div>
-                      <div className="space-y-3 flex-1">
-                        <div className="text-left">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                            Analyze your environment for resources
-                          </h3>
-                          <p className="text-gray-600 leading-relaxed">
-                            Upload an image of your surroundings and AidSnap identifies available first aid resources —
-                            towels, ice, medications, or improvised tools for emergency care.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-                <CarouselItem className="pl-2 basis-[85%]">
-                  <div className="bg-white/30 backdrop-blur-sm border border-white/20 rounded-2xl p-6 h-full">
-                    <div className="space-y-6 h-full flex flex-col">
-                      <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                        <TypewriterGuidance />
-                      </div>
-                      <div className="space-y-3 flex-1">
-                        <div className="text-left">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2">Provides instant guidance</h3>
-                          <p className="text-gray-600 leading-relaxed">
-                            Just describe the emergency. AidSnap knows what you're dealing with and responds with exactly
-                            the right medical steps — no searching, no delays.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-                <CarouselItem className="pl-2 basis-[85%]">
-                  <div className="bg-white/30 backdrop-blur-sm border border-white/20 rounded-2xl p-6 h-full">
-                    <div className="space-y-6 h-full flex flex-col">
-                      <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                        <AIGuidanceChat />
-                      </div>
-                      <div className="space-y-3 flex-1">
-                        <div className="text-left">
-                          <h3 className="text-xl font-semibold text-gray-900 mb-2">AidSnap Agent Chat</h3>
-                          <p className="text-gray-600 leading-relaxed">
-                            Chat with our custom AI agent for personalized emergency guidance and general health assistance. Get instant answers to your
-                            questions and receive step-by-step instructions tailored to your specific situation.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-              </CarouselContent>
-              <CarouselPrevious />
-              <CarouselNext />
-            </Carousel>
-          </div>
-
-          {/* Desktop Grid */}
-          <div className="hidden md:block max-w-6xl mx-auto bg-white/30 backdrop-blur-sm border border-white/20 p-8 md:p-12">
-            {/* 2x2 Grid */}
-            <div className="grid md:grid-cols-2 gap-0">
-              {/* Top Left - Analyze visual injuries with QuickSnap */}
-              <div className="space-y-6 p-8 border-r border-b border-gray-200">
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                  <InjuryAnalysis />
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-1 h-6 bg-[#F87171] rounded-full flex-shrink-0 mt-1"></div>
-                    <div className="text-left">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        Analyze visual injuries with QuickSnap
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        AidSnap's QuickSnap feature instantly analyzes wounds, burns, cuts, and symptoms through your
-                        camera — providing immediate assessment and treatment guidance for any visible injury.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Top Right - Analyze your environment for first aid resources */}
-              <div className="space-y-6 p-8 border-b border-gray-200">
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                  <EnvironmentAnalysis />
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-1 h-6 bg-[#F87171] rounded-full flex-shrink-0 mt-1"></div>
-                    <div className="text-left">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                        Analyze your environment for resources
-                      </h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        Upload an image of your surroundings and AidSnap identifies available first aid resources —
-                        towels, ice, medications, or improvised tools for emergency care.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Left - Provides instant guidance */}
-              <div className="space-y-6 p-8 border-r border-gray-200">
-                <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                  <TypewriterGuidance />
-                </div>
-                <div className="space-y-3">
-                  <div className="flex items-start space-x-3">
-                    <div className="w-1 h-6 bg-[#F87171] rounded-full flex-shrink-0 mt-1"></div>
-                    <div className="text-left">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">Provides instant guidance</h3>
-                      <p className="text-gray-600 leading-relaxed">
-                        Just describe the emergency. AidSnap knows what you're dealing with and responds with exactly
-                        the right medical steps — no searching, no delays.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Bottom Right - AI Guidance Chat */}
-              <div className="space-y-6 p-8">
-                <div className="aspect-[4/3] rounded-2xl ">
-                  <AIGuidanceChat />
-                </div>
-              </div>
-            </div>
+    <div className="mx-auto w-full max-w-[400px] rounded-3xl border bg-background p-2 shadow-[0_24px_64px_-24px_rgb(0_0_0/0.25)]">
+      <div className="overflow-hidden rounded-2xl bg-background">
+        <div className="flex h-12 items-center justify-between px-3 text-muted-foreground">
+          <Menu className="size-[18px]" strokeWidth={1.5} />
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-7 items-center rounded-full bg-signal px-3 text-xs font-medium text-signal-foreground">SOS</span>
+            <SquarePen className="size-[18px]" strokeWidth={1.5} />
           </div>
         </div>
-      </section>
-
-      {/* AidSnap Agent Section */}
-      <section className="py-20 md:py-32 scroll-reveal hidden md:block">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-20">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">How it Works</h2>
-            <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-              Experience the next generation of AI-powered emergency response. Our intelligent agent guides you through
-              critical situations with unprecedented accuracy and speed.
-            </p>
-          </div>
-
-          <div className="max-w-6xl mx-auto space-y-8">
-            {/* Step 1 */}
-            <div className="step-section bg-white/30 backdrop-blur-sm border border-white/20 p-8 md:p-12" data-step={0}>
-              <div className="grid md:grid-cols-2 gap-16 items-center">
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-4">
-                    <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
-                        activeStep === 0 ? "bg-[#F87171]" : "bg-gray-300"
-                      }`}
-                    >
-                      <Camera className={`w-6 h-6 ${activeStep === 0 ? "text-white" : "text-gray-400"}`} />
-                    </div>
-                    <div>
-                      <p className="text-[#F87171] text-sm font-medium mb-2 uppercase tracking-wider">Step-01</p>
-                      <h3 className="text-3xl font-bold text-gray-900 mb-4">Point & Analyze</h3>
-                      <p className="text-gray-600 leading-relaxed text-lg">
-                        Simply point your camera at the injury or describe symptoms. Our AI instantly analyzes the
-                        situation and provides immediate assessment.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-3xl p-8 h-80 flex items-center justify-center">
-                  <div className="bg-white/70 backdrop-blur-sm border border-white/40 rounded-2xl p-8 w-full max-w-sm text-center shadow-lg">
-                    <div className="w-16 h-16 bg-[#F87171] rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Camera className="w-8 h-8 text-white" />
-                    </div>
-                    <h4 className="text-xl font-semibold text-gray-900 mb-2">AI Analysis</h4>
-                    <p className="text-gray-600 mb-4">Analyzing injury...</p>
-                    <div className="bg-gray-100/80 rounded-lg p-4">
-                      <div className="flex items-center justify-between mb-2">
-                        <span className="text-sm text-gray-600">Analyzing...</span>
-                        <span className="text-sm text-[#F87171]">85%</span>
-                      </div>
-                      <div className="w-full bg-gray-300 rounded-full h-2">
-                        <div className="bg-[#F87171] h-2 rounded-full w-4/5 transition-all duration-1000"></div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        <div className="space-y-4 px-4 pb-4 pt-2 text-[15px] leading-6">
+          <p className="ml-auto w-fit max-w-[80%] rounded-2xl bg-muted px-4 py-2">
+            My dad cut his hand on a kitchen knife. It won&apos;t stop bleeding.
+          </p>
+          <p>Press on the cut now and don&apos;t let go. Here is what to do:</p>
+          <ol className="space-y-3">
+            {steps.map(([action, detail], n) => (
+              <li key={n} className="flex gap-2">
+                <span className="mt-0.5">
+                  <Keycap n={n + 1} />
+                </span>
+                <span>
+                  {action}
+                  <span className="block text-sm text-muted-foreground">{detail}</span>
+                </span>
+              </li>
+            ))}
+          </ol>
+          <div className="space-y-3 rounded-xl border bg-card p-4">
+            <div>
+              <p className="font-medium">Severe bleeding</p>
+              <p className="text-sm text-muted-foreground">Stop heavy bleeding from a wound with firm, direct pressure.</p>
             </div>
-
-            {/* Step 2 */}
-            <div className="step-section bg-white/30 backdrop-blur-sm border border-white/20 p-8 md:p-12" data-step={1}>
-              <div className="grid md:grid-cols-2 gap-16 items-center">
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-4">
-                    <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
-                        activeStep === 1 ? "bg-[#F87171]" : "bg-gray-300"
-                      }`}
-                    >
-                      <Mic className={`w-6 h-6 ${activeStep === 1 ? "text-white" : "text-gray-400"}`} />
-                    </div>
-                    <div>
-                      <p className="text-[#F87171] text-sm font-medium mb-2 uppercase tracking-wider">Step-02</p>
-                      <h3 className="text-3xl font-bold text-gray-900 mb-4">Follow Voice Guidance</h3>
-                      <p className="text-gray-600 leading-relaxed text-lg">
-                        Receive clear, step-by-step voice instructions for immediate care. Our AI guides you through each
-                        action with calm, professional direction.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-3xl p-8 h-80 flex items-center justify-center">
-                  <div className="bg-white/70 backdrop-blur-sm border border-white/40 rounded-2xl p-8 w-full max-w-sm text-center shadow-lg">
-                    <div className="w-16 h-16 bg-[#F87171] rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Mic className="w-8 h-8 text-white" />
-                    </div>
-                    <h4 className="text-xl font-semibold text-gray-900 mb-2">Voice Guidance</h4>
-                    <p className="text-gray-600 mb-4">Step 2 of 5 complete</p>
-                    <div className="bg-gray-100/80 rounded-lg p-4">
-                      <div className="flex justify-between text-sm text-gray-600 mb-2">
-                        <span>Progress</span>
-                        <span>40%</span>
-                      </div>
-                      <div className="w-full bg-gray-300 rounded-full h-2 mb-3">
-                        <div className="bg-[#F87171] h-2 rounded-full w-2/5"></div>
-                      </div>
-                      <p className="text-sm text-gray-600 text-left">
-                        "Apply direct pressure to the wound using a clean cloth..."
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="step-section bg-white/30 backdrop-blur-sm border border-white/20 p-8 md:p-12" data-step={2}>
-              <div className="grid md:grid-cols-2 gap-16 items-center">
-                <div className="space-y-6">
-                  <div className="flex items-start space-x-4">
-                    <div
-                      className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
-                        activeStep === 2 ? "bg-[#F87171]" : "bg-gray-300"
-                      }`}
-                    >
-                      <Phone className={`w-6 h-6 ${activeStep === 2 ? "text-white" : "text-gray-400"}`} />
-                    </div>
-                    <div>
-                      <p className="text-[#F87171] text-sm font-medium mb-2 uppercase tracking-wider">Step-03</p>
-                      <h3 className="text-3xl font-bold text-gray-900 mb-4">Connect Emergency Services</h3>
-                      <p className="text-gray-600 leading-relaxed text-lg">
-                        When needed, instantly connect with emergency services. Your location and situation details are
-                        automatically shared with responders.
-                      </p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="rounded-3xl p-8 h-80 flex items-center justify-center">
-                  <div className="bg-white/70 backdrop-blur-sm border border-white/40 rounded-2xl p-8 w-full max-w-sm text-center shadow-lg">
-                    <div className="w-16 h-16 bg-[#F87171] rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Phone className="w-8 h-8 text-white" />
-                    </div>
-                    <h4 className="text-xl font-semibold text-gray-900 mb-2">Emergency Services</h4>
-                    <p className="text-gray-600 mb-4">Connected to 911</p>
-                    <div className="bg-gray-100/80 rounded-lg p-4">
-                      <div className="flex items-center justify-center space-x-2 mb-3">
-                        <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                        <span className="text-sm text-gray-600">Connected</span>
-                      </div>
-                      <div className="text-left space-y-2">
-                        <p className="text-sm text-gray-600">📍 Location shared</p>
-                        <p className="text-sm text-gray-600">🚑 ETA: 7 minutes</p>
-                        <p className="text-sm text-gray-600">📋 Medical info sent</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <span className="flex h-11 items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-primary-foreground">
+              <ListOrdered className="size-4" strokeWidth={1.5} />
+              Start step by step
+            </span>
           </div>
         </div>
-      </section>
-
-      {/* Quote Section - Separate */}
-      <section className="quote-section py-20 md:py-32 scroll-reveal rounded-b-[48px] md:rounded-b-none bg-white md:bg-transparent border-t border-gray-300 md:border-t-0">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center">
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-8">"This could change everything."</h3>
-            <Link
-              href="/manifesto"
-              className="bg-gray-900 text-white px-8 py-3 rounded-full text-lg font-medium hover:bg-gray-800 transition-all duration-300 hover:scale-105 inline-flex items-center space-x-2"
-            >
-              <span>We agree.</span>
-              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </Link>
+        <div className="p-2">
+          <div className="flex items-center justify-between rounded-2xl border bg-muted/30 p-2 pl-3">
+            <span className="text-[15px] text-muted-foreground">Describe what happened</span>
+            <span className="flex items-center gap-2">
+              <AudioLines className="size-[18px] text-muted-foreground" strokeWidth={1.5} />
+              <span className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                <ArrowUp className="size-4" strokeWidth={2} />
+              </span>
+            </span>
           </div>
         </div>
-      </section>
-
-      {/* It's like your mom Section - Hidden on mobile */}
-      <section className="scroll-reveal hidden md:block">
-        <div className="bg-[#181B20] py-20 md:py-32 w-full rounded-t-[48px] rounded-b-[48px]">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="max-w-6xl mx-auto">
-              {/* Header */}
-              <div className="text-left mb-16">
-                <h2 ref={typingRef} className="text-4xl md:text-5xl font-bold text-white mb-2 whitespace-pre-wrap">
-                  {typedText}
-                  {!hasTyped && <span className="animate-pulse">|</span>}
-                </h2>
-                <p className="text-gray-400 text-lg max-w-2xl mt-6">
-                  AidSnap is always prepared with life-saving resources available offline, ready for any emergency
-                  situation when you need it most.
-                </p>
-              </div>
-
-              {/* 2x3 Grid without lines */}
-              <div className="p-8 md:p-12">
-                <div className="grid md:grid-cols-2 gap-0">
-                  {/* Row 1 - Left: Text, Right: Image */}
-                  <div className="space-y-6 p-8 border-r border-b border-gray-700/40">
-                    <div className="text-left">
-                      <h3 className="text-xl font-semibold text-white mb-2">Works without internet</h3>
-                      <p className="text-gray-400 leading-relaxed">
-                        After AidSnap loads, our AI model works fully offline to provide emergency guidance when connectivity is limited. Core first aid protocols and medical assessments run directly on your device. No internet connection required when every second counts.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6 p-8 border-b border-gray-700/40">
-                    <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                      <OfflineIndicator />
-                    </div>
-                  </div>
-
-                  {/* Row 2 - Left: Image, Right: Text */}
-                  <div className="space-y-6 p-8 border-r border-b border-gray-700/40">
-                    <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                      <video
-                        src="/offline_protocols_demo.MP4"
-                        width={400}
-                        height={300}
-                        className="w-full h-full object-cover pointer-events-none"
-                        autoPlay
-                        muted
-                        playsInline
-                        loop
-                        poster="https://placehold.co/400x300/181b20/ffffff?text=Offline+Protocols"
-                      >
-                        Your browser does not support the video tag.
-                      </video>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6 p-8 border-b border-gray-700/40">
-                    <div className="text-left">
-                      <h3 className="text-xl font-semibold text-white mb-2">Always prepared</h3>
-                      <p className="text-gray-400 leading-relaxed">
-                        AidSnap is pre-loaded with comprehensive first aid guides and medical articles containing easy-to-understand, step-by-step instructions. These resources are downloaded and stored locally on your device for instant offline access during emergencies. No waiting, no buffering—just immediate, life-saving guidance when you need it most.
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Row 3 - Left: Text, Right: Image */}
-                  <div className="space-y-6 p-8 border-r border-gray-700/40">
-                    <div className="text-left">
-                      <h3 className="text-xl font-semibold text-white mb-2">No panic, just action</h3>
-                      <p className="text-gray-400 leading-relaxed">
-                        AidSnap uses your phone's location services to instantly find the nearest emergency providers and medical facilities. You can call them directly from the app with one tap—no memorization needed, no searching for numbers required.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6 p-8">
-                    <div className="aspect-[4/3] rounded-2xl overflow-hidden">
-                      <CalmInterface />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Emergency Protocols Showcase */}
-      <section id="emergency-section" className="py-20 md:py-32 scroll-reveal bg-[#F6F8FB]">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-20">
-            <p className="text-[#F87171] text-sm font-medium mb-4 uppercase tracking-wider">Emergency Protocols</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-6">
-              Access life-saving protocols
-              <br />
-              when seconds count
-            </h2>
-          </div>
-
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-16 items-stretch">
-            {/* Left Column - Emergency Features - Hidden on mobile */}
-            <div className="hidden lg:flex lg:col-span-1 flex-col justify-between space-y-8">
-              {/* Visual Recognition */}
-              <LiquidGlass
-                className="rounded-3xl p-8 cursor-pointer scroll-reveal liquid-glass-card flex-1"
-                intensity={1.3}
-                viscosity={0.5}
-              >
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="w-12 h-12 bg-[#F87171] rounded-full flex items-center justify-center">
-                    <Camera className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900">Visual Recognition</h3>
-                </div>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  Point your camera at injuries or symptoms for instant AI-powered analysis and treatment
-                  recommendations.
-                </p>
-              </LiquidGlass>
-
-              {/* Voice Guidance */}
-              <LiquidGlass
-                className="rounded-3xl p-8 cursor-pointer scroll-reveal liquid-glass-card flex-1"
-                intensity={1.3}
-                viscosity={0.5}
-              >
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="w-12 h-12 bg-[#F87171] rounded-full flex items-center justify-center">
-                    <Mic className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900">Voice Guidance</h3>
-                </div>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  Hands-free voice instructions guide you through critical first aid procedures step-by-step.
-                </p>
-              </LiquidGlass>
-
-              {/* Medical Grade AI */}
-              <LiquidGlass
-                className="rounded-3xl p-8 cursor-pointer scroll-reveal liquid-glass-card flex-1"
-                intensity={1.3}
-                viscosity={0.5}
-              >
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="w-12 h-12 bg-[#F87171] rounded-full flex items-center justify-center">
-                    <Shield className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-gray-900">Medical Grade AI</h3>
-                </div>
-                <p className="text-gray-600 leading-relaxed text-sm">
-                  Trained on certified medical protocols and continuously updated with the latest first aid guidelines.
-                </p>
-              </LiquidGlass>
-            </div>
-
-            {/* Right Column - Large Mockup (Autoplay Video) - Full width on mobile */}
-            <div className="lg:col-span-2 col-span-full scroll-reveal flex items-stretch">
-              <div className="rounded-3xl overflow-hidden w-full">
-                <video
-                  src="/emergency_mockup.mp4"
-                  width={500}
-                  height={400}
-                  className="w-full h-full object-cover rounded-3xl"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  poster="https://placehold.co/500x400/f6f8fb/181b20?text=Emergency+Dashboard"
-                  onError={(e) => {
-                    console.error('Video failed to load:', e)
-                  }}
-                >
-                  <source src="/emergency_mockup.mp4" type="video/mp4" />
-                  Your browser does not support the video tag.
-                </video>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Download Section - Keep Pure White */}
-      <section id="download-section" className="py-20 md:py-32 scroll-reveal">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="bg-white rounded-3xl py-24 md:py-32 px-8 max-w-6xl mx-auto text-center shadow-lg border border-gray-100">
-            <p className="text-gray-500 text-sm font-medium mb-6 uppercase tracking-wider">WELCOME TO</p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-black mb-12 leading-tight">
-              The Future of Emergency
-              <br />
-              Response.
-            </h2>
-
-            <div className="space-y-4">
-              <button className="bg-gray-400 text-white px-8 py-4 rounded-full text-lg font-medium cursor-not-allowed inline-flex items-center space-x-3" disabled>
-                <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z" />
-                </svg>
-                <span>Coming Soon on iOS</span>
-              </button>
-
-              <div>
-                <a
-                  href="https://play.google.com/store/apps/details?id=com.aidsnap.app&utm_source=na_Med"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-block"
-                >
-                  <button className="text-gray-800 hover:text-gray-800 transition-colors underline text-lg">
-                    Download for Android
-                  </button>
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-      
       </div>
     </div>
+  )
+}
+
+function Card({ title, body, children, className }: { title: string; body: string; children: React.ReactNode; className?: string }) {
+  return (
+    <div className={cn("flex flex-col justify-between gap-8 overflow-hidden rounded-3xl border bg-card p-6", className)}>
+      <div className="flex flex-1 items-center justify-center">{children}</div>
+      <div className="space-y-1">
+        <h3 className="font-medium">{title}</h3>
+        <p className="text-sm text-muted-foreground">{body}</p>
+      </div>
+    </div>
+  )
+}
+
+function LiveVisual() {
+  return (
+    <div className="flex w-full max-w-md flex-col items-center gap-6">
+      <div className="orb size-24 rounded-full" aria-hidden />
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <span className="size-2 rounded-full bg-positive" />
+        Listening
+        <span className="font-mono tabular-nums">01:24</span>
+      </div>
+      <div className="w-full space-y-2 text-[15px]">
+        <p className="ml-auto w-fit rounded-xl bg-muted/60 px-3 py-2">I&apos;ve been pressing for five minutes.</p>
+        <p className="w-fit rounded-xl bg-muted/60 px-3 py-2">Good. Keep pressing and don&apos;t lift the cloth to check.</p>
+      </div>
+    </div>
+  )
+}
+
+function MedicalIdVisual() {
+  const rows = [
+    ["Blood type", "O+"],
+    ["Allergies", "Penicillin"],
+    ["Conditions", "Asthma"],
+    ["Emergency contact", "Ravi Patel"],
+  ]
+  return (
+    <div className="w-full max-w-[280px] -rotate-2 rounded-2xl border bg-background p-5 shadow-[0_12px_32px_-12px_rgb(0_0_0/0.2)]">
+      <p className="text-xs text-muted-foreground">Medical ID</p>
+      <p className="mt-1 text-[22px] font-medium tracking-tight">Maya Patel</p>
+      <dl className="mt-4 space-y-2 text-sm">
+        {rows.map(([k, v]) => (
+          <div key={k} className="flex justify-between gap-4 border-t pt-2">
+            <dt className="text-muted-foreground">{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+      </dl>
+    </div>
+  )
+}
+
+function StepVisual() {
+  return (
+    <div className="w-full max-w-[280px] space-y-5">
+      <div className="space-y-2">
+        <p className="font-mono text-xs tabular-nums text-muted-foreground">Step 6 of 10</p>
+        <div className="h-1 rounded-full bg-muted">
+          <div className="h-1 w-[60%] rounded-full bg-foreground" />
+        </div>
+      </div>
+      <p className="text-xl font-medium leading-snug tracking-tight">Push hard and fast in the center of the chest.</p>
+      <div className="flex items-center gap-3 rounded-2xl bg-muted/60 p-3">
+        <span className="beat size-10 shrink-0 rounded-full bg-foreground" aria-hidden />
+        <div className="text-sm">
+          <p>Push to the beat</p>
+          <p className="font-mono tabular-nums text-muted-foreground">110 a minute</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function CallVisual() {
+  return (
+    <div className="w-full max-w-sm rounded-3xl border bg-background p-5 shadow-[0_12px_32px_-12px_rgb(0_0_0/0.2)]">
+      <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-muted" />
+      <p className="text-center text-lg font-medium">Call 911?</p>
+      <p className="mt-1 text-center text-sm text-muted-foreground">
+        Emergency services <span className="font-mono tabular-nums">911</span>
+      </p>
+      <div className="mt-5 grid grid-cols-2 gap-2">
+        <span className="flex h-11 items-center justify-center rounded-lg bg-muted text-sm">Cancel</span>
+        <span className="flex h-11 items-center justify-center gap-2 rounded-lg bg-signal text-sm font-medium text-signal-foreground">
+          <Phone className="size-4" strokeWidth={1.5} />
+          Call 911
+        </span>
+      </div>
+    </div>
+  )
+}
+
+const sources = [
+  ["Apple Health", true],
+  ["Health Connect", false],
+  ["WHOOP", true],
+  ["Oura", false],
+  ["Withings", false],
+  ["Dexcom", false],
+] as const
+
+const how = [
+  {
+    title: "Say what happened",
+    body: "Type it, say it or add a photo. You don't need medical words. AidSnap asks what it needs to know.",
+  },
+  {
+    title: "Follow short steps",
+    body: "Answers come as numbered steps. Open the full guide to go one step at a time, with timers and a CPR beat.",
+  },
+  {
+    title: "Call when it's serious",
+    body: "AidSnap puts your region's emergency number on screen. It never dials on its own: you tap, confirm and talk.",
+  },
+]
+
+export default function Home() {
+  return (
+    <>
+      <SiteHeader />
+      <main className="overflow-x-hidden">
+        <section className="mx-auto grid max-w-6xl items-center gap-16 px-4 pb-24 pt-16 sm:px-6 md:pt-24 lg:grid-cols-[1.25fr_1fr] lg:pb-32">
+          <div className="space-y-8">
+            <h1 className="rise text-[40px] font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-[64px]">
+              Know what to do
+              <br />
+              <span className="text-muted-foreground">before help arrives.</span>
+            </h1>
+            <p className="rise max-w-lg text-lg text-muted-foreground" style={i(1)}>
+              Tell AidSnap what happened, by text, photo or voice. It answers in clear steps, stays with you while you do
+              them, and keeps the emergency number one tap away.
+            </p>
+            <div className="rise flex flex-wrap gap-3" style={i(2)}>
+              <a href={PLAY_URL} target="_blank" rel="noopener noreferrer" className={button.primary}>
+                Get it on Android
+              </a>
+              <a href="#how" className={button.secondary}>
+                See how it works
+              </a>
+            </div>
+          </div>
+          <div className="rise" style={i(3)}>
+            <ChatPreview />
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 py-24 sm:px-6 md:py-32">
+          <Heading a="Everything for the next ten minutes." b="Nothing you have to learn first." className="mb-12 md:mb-16" />
+          <div className="grid grid-flow-dense gap-4 lg:grid-cols-3">
+            <Card
+              className="lg:col-span-2"
+              title="Talk it through, hands free"
+              body="Start Live and speak. AidSnap listens, answers out loud and can look through your camera, so your hands stay where they're needed."
+            >
+              <LiveVisual />
+            </Card>
+            <Card title="Medical ID" body="Allergies, conditions, medications and who to call, ready for a responder.">
+              <MedicalIdVisual />
+            </Card>
+            <Card title="Guides, one step at a time" body="16 first aid guides based on AHA, Red Cross and NHS guidance, with timers and a CPR beat.">
+              <StepVisual />
+            </Card>
+            <Card
+              className="lg:col-span-2"
+              title="The right number, one tap away"
+              body="AidSnap knows the emergency numbers for your region. It never calls on its own: you tap, it asks once, you talk."
+            >
+              <CallVisual />
+            </Card>
+            <div className="flex flex-col gap-8 rounded-3xl border bg-card p-6 md:flex-row md:items-center md:justify-between lg:col-span-3">
+              <div className="max-w-md space-y-1">
+                <h3 className="font-medium">Answers that know you, if you want</h3>
+                <p className="text-sm text-muted-foreground">
+                  Connect your health apps and wearables, and AidSnap can read your heart rate, sleep or glucose when you
+                  ask. Off until you turn it on.
+                </p>
+              </div>
+              <ul className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
+                {sources.map(([name, on]) => (
+                  <li key={name} className="flex items-center gap-2">
+                    <span className={cn("size-2 rounded-full", on ? "bg-positive" : "bg-muted-foreground/30")} />
+                    {name}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="how" className="mx-auto grid max-w-6xl scroll-mt-16 gap-12 px-4 py-24 sm:px-6 md:py-32 lg:grid-cols-2">
+          <div>
+            <Heading a="It starts with one question." b="What happened?" className="lg:sticky lg:top-32" />
+          </div>
+          <Steps steps={how} />
+        </section>
+
+        <section className="mx-auto max-w-4xl px-4 py-24 sm:px-6 md:py-40">
+          <ScrubLine text="No one should ever feel powerless when it matters most." />
+          <a href="/manifesto" className="mt-8 inline-flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground">
+            Read the manifesto
+            <ChevronRight className="size-4" strokeWidth={1.5} />
+          </a>
+        </section>
+
+        <section id="download" className="mx-auto max-w-6xl px-4 pb-24 sm:px-6 md:pb-32">
+          <div className="flex flex-col items-start justify-between gap-8 rounded-3xl bg-muted/60 p-8 md:flex-row md:items-end md:p-12">
+            <Heading a="Keep it on your phone" b="before you need it." />
+            <div className="space-y-3">
+              <a href={PLAY_URL} target="_blank" rel="noopener noreferrer" className={button.primary}>
+                Get it on Android
+              </a>
+              <p className="text-sm text-muted-foreground">iOS is coming soon.</p>
+            </div>
+          </div>
+        </section>
+      </main>
+      <SiteFooter />
+    </>
   )
 }
