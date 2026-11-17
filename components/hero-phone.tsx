@@ -3,8 +3,35 @@
 import { useEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ArrowUp, AudioLines, BatteryFull, ListOrdered, Menu, Signal, SquarePen, Wifi } from "lucide-react"
+import { ArrowUp, AudioLines, ListOrdered, Menu, SquarePen } from "lucide-react"
 import { Keycap } from "@/components/site"
+import { cn } from "@/lib/utils"
+
+const key = "absolute w-[3px] bg-[linear-gradient(90deg,#8d8f96,#d9dade)]"
+
+/** iOS status bar glyphs: four signal bars, Wi-Fi fan, and the rounded battery with its cap. */
+function StatusIcons() {
+  return (
+    <span className="flex items-center gap-[5px] text-foreground">
+      <svg viewBox="0 0 18 12" className="h-[11px] w-[17px]" fill="currentColor" aria-hidden>
+        <rect x="0" y="8" width="3" height="4" rx="0.8" />
+        <rect x="5" y="5.5" width="3" height="6.5" rx="0.8" />
+        <rect x="10" y="3" width="3" height="9" rx="0.8" />
+        <rect x="15" y="0" width="3" height="12" rx="0.8" />
+      </svg>
+      <svg viewBox="0 0 16 12" className="h-[11px] w-[15px]" fill="currentColor" aria-hidden>
+        <path d="M8 2.4c2.3 0 4.4.9 6 2.4l1.2-1.3A10.4 10.4 0 0 0 8 .6 10.4 10.4 0 0 0 .8 3.5L2 4.8a8.6 8.6 0 0 1 6-2.4Z" />
+        <path d="M8 5.8c1.4 0 2.6.5 3.6 1.4l1.2-1.3A7 7 0 0 0 8 4a7 7 0 0 0-4.8 1.9l1.2 1.3c1-.9 2.2-1.4 3.6-1.4Z" />
+        <path d="M8 9.2c.5 0 1 .2 1.3.5L8 11.2 6.7 9.7c.3-.3.8-.5 1.3-.5Z" />
+      </svg>
+      <svg viewBox="0 0 27 13" className="h-[12px] w-[25px]" aria-hidden>
+        <rect x="0.5" y="0.5" width="23" height="12" rx="3.8" fill="none" stroke="currentColor" strokeOpacity="0.4" />
+        <rect x="2" y="2" width="20" height="9" rx="2.5" fill="currentColor" />
+        <path d="M25 4.5v4c.8-.3 1.3-1.1 1.3-2s-.5-1.7-1.3-2Z" fill="currentColor" fillOpacity="0.4" />
+      </svg>
+    </span>
+  )
+}
 
 const beats = [
   { title: "Say what happened", body: "Type it, say it or add a photo." },
@@ -98,21 +125,22 @@ export function HeroPhone() {
 function Phone() {
   return (
     <div data-phone className="relative mx-auto w-[300px]" role="img" aria-label="AidSnap on an iPhone answering a question about a deep cut with numbered first aid steps">
-      <span className="absolute -left-[3px] top-[104px] h-8 w-[3px] rounded-l bg-ink/80" />
-      <span className="absolute -left-[3px] top-[150px] h-14 w-[3px] rounded-l bg-ink/80" />
-      <span className="absolute -left-[3px] top-[212px] h-14 w-[3px] rounded-l bg-ink/80" />
-      <span className="absolute -right-[3px] top-[170px] h-20 w-[3px] rounded-r bg-ink/80" />
-      <div className="rounded-[54px] bg-ink p-[10px] shadow-[0_40px_80px_-32px_rgb(0_0_0/0.45),inset_0_0_0_1px_rgb(255_255_255/0.12)] ring-1 ring-foreground/15">
-        <div className="relative flex h-[600px] flex-col overflow-hidden rounded-[44px] bg-background" aria-hidden>
-          <div className="flex h-11 shrink-0 items-center justify-between px-7 pt-1 text-[13px] font-semibold">
-            <span className="tabular-nums">9:41</span>
-            <span className="flex items-center gap-1">
-              <Signal className="size-3.5" strokeWidth={2.5} />
-              <Wifi className="size-3.5" strokeWidth={2.5} />
-              <BatteryFull className="size-5" strokeWidth={1.5} />
-            </span>
-          </div>
-          <span className="absolute left-1/2 top-[10px] h-[28px] w-[94px] -translate-x-1/2 rounded-full bg-ink" />
+      {/* Buttons, in the aluminum of the rim: Action and volume on the left, side button and Camera Control on the right. */}
+      <span className={cn(key, "-left-[3px] top-[118px] h-[26px] rounded-l-[2px]")} />
+      <span className={cn(key, "-left-[3px] top-[168px] h-[46px] rounded-l-[2px]")} />
+      <span className={cn(key, "-left-[3px] top-[226px] h-[46px] rounded-l-[2px]")} />
+      <span className={cn(key, "-right-[3px] top-[180px] h-[74px] rounded-r-[2px]")} />
+      <span className={cn(key, "-right-[3px] top-[372px] h-[38px] rounded-r-[2px] opacity-70")} />
+      {/* Aluminum rim, then a thin even black bezel around the glass. */}
+      <div className="rounded-[50px] bg-[linear-gradient(145deg,#d9dade,#9a9ca3_30%,#e6e7ea_55%,#8d8f96_80%,#c7c8cd)] p-[2.5px] shadow-[0_40px_80px_-32px_rgb(0_0_0/0.45),0_2px_6px_rgb(0_0_0/0.12)]">
+        <div className="rounded-[47.5px] bg-black p-[7px]">
+          <div className="relative flex h-[600px] flex-col overflow-hidden rounded-[41px] bg-background" aria-hidden>
+            <div className="flex h-[46px] shrink-0 items-center justify-between pl-[30px] pr-[26px] pt-[3px]">
+              <span className="w-[54px] text-center text-[15px] font-semibold tabular-nums tracking-[-0.01em]">9:41</span>
+              <StatusIcons />
+            </div>
+            {/* Dynamic Island, smaller on iPhone 18: about 13.5 mm wide at rest. */}
+            <span className="absolute left-1/2 top-[11px] h-[25px] w-[64px] -translate-x-1/2 rounded-full bg-black" />
 
           <div className="flex h-11 shrink-0 items-center justify-between px-4 text-muted-foreground">
             <Menu className="size-[18px]" strokeWidth={1.5} />
@@ -176,6 +204,7 @@ function Phone() {
             <div className="mx-auto mt-2.5 h-[5px] w-[120px] rounded-full bg-foreground" />
           </div>
         </div>
+      </div>
       </div>
     </div>
   )
