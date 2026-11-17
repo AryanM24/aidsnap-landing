@@ -2,28 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
+/* AidSnap tokens, from the app's DESIGN.md (assistant-ui zinc ramp). Channels only, so Tailwind can add alpha. */
+:root {
+  --background: 1 0 0;
+  --foreground: 0.141 0.005 285.823;
+  --card: 1 0 0;
+  --muted: 0.967 0.001 286.375;
+  --muted-foreground: 0.552 0.016 285.938;
+  --primary: 0.21 0.006 285.885;
+  --primary-foreground: 0.985 0 0;
+  --signal: 0.577 0.22 25;
+  --signal-foreground: 0.985 0 0;
+  --positive: 0.6 0.13 155;
+  --border: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.705 0.015 286.067);
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  /* Fixed in both themes: the footer and the phone body stay dark. */
+  --ink: 0.141 0.005 285.823;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
   :root {
-    --background: 0 0% 0%;
-    --foreground: 0 0% 98%;
-    --card: 0 0% 3.9%;
-    --card-foreground: 0 0% 98%;
-    --popover: 0 0% 3.9%;
-    --popover-foreground: 0 0% 98%;
-    --primary: 0 0% 98%;
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 14.9%;
-    --secondary-foreground: 0 0% 98%;
-    --muted: 0 0% 14.9%;
-    --muted-foreground: 0 0% 63.9%;
-    --accent: 0 0% 14.9%;
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 0 0% 14.9%;
-    --input: 0 0% 14.9%;
-    --ring: 0 0% 83.1%;
-    --radius: 0.5rem;
+    --background: 0.141 0.005 285.823;
+    --foreground: 0.985 0 0;
+    --card: 0.21 0.006 285.885;
+    --muted: 0.274 0.006 286.033;
+    --muted-foreground: 0.705 0.015 286.067;
+    --primary: 0.92 0.004 286.32;
+    --primary-foreground: 0.21 0.006 285.885;
+    --signal: 0.66 0.21 25;
+    --positive: 0.74 0.14 155;
+    --border: oklch(1 0 0 / 10%);
+    --ring: oklch(0.552 0.016 285.938);
+    color-scheme: dark;
   }
 }
 
@@ -31,64 +43,88 @@
   * {
     @apply border-border;
   }
+  html {
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background font-sans text-foreground;
+  }
+  ::selection {
+    background: oklch(var(--foreground) / 0.12);
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+  p {
+    text-wrap: pretty;
   }
 }
 
-/* Custom animations */
-@keyframes float {
+/* The one entrance on load: a short rise with a small stagger. No fade, so text is visible on the first frame
+   and the headline paints immediately (opacity 0 would hold back Largest Contentful Paint). */
+@keyframes rise {
+  from {
+    transform: translateY(8px);
+  }
+}
+.rise {
+  animation: rise 600ms var(--ease) both;
+  animation-delay: calc(var(--i, 0) * 80ms);
+}
+
+/* CPR metronome: one beat at 110 a minute, the same rate as the app. */
+@keyframes beat {
   0%,
   100% {
-    transform: translateY(0px);
+    transform: scale(1);
   }
-  50% {
-    transform: translateY(-10px);
+  12% {
+    transform: scale(0.88);
   }
 }
+.beat {
+  animation: beat calc(60s / 110) var(--ease) infinite;
+}
 
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
+/* The Live orb: a small sky that drifts, as in the app. */
+@keyframes drift {
   to {
-    opacity: 1;
-    transform: translateY(0);
+    background-position: -200% 50%, 200% 50%;
   }
 }
+.orb {
+  background:
+    radial-gradient(ellipse 60% 35% at 40% 60%, oklch(0.97 0.01 240 / 0.7), transparent 70%),
+    linear-gradient(110deg, oklch(0.8 0.07 240), oklch(0.9 0.03 230), oklch(0.76 0.08 245), oklch(0.8 0.07 240));
+  background-size: 200% 100%, 200% 100%;
+  animation: drift 8s linear infinite;
+}
 
-@keyframes scrollReveal {
-  from {
+/* Where the hero animation runs, the phone starts on its welcome screen before GSAP has loaded, so nothing flashes. */
+@media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+  [data-m="welcome"] {
+    opacity: 1;
+  }
+  [data-m="chat"],
+  [data-cap] {
     opacity: 0;
-    transform: translateY(50px);
   }
-  to {
-    opacity: 1;
-    transform: translateY(0);
+  [data-beat] {
+    opacity: 0.3;
   }
 }
 
-.float-animation {
-  animation: float 6s ease-in-out infinite;
-}
-
-.fade-in-up {
-  animation: fadeInUp 0.8s ease-out forwards;
-}
-
-.scroll-reveal {
-  opacity: 0;
-  transform: translateY(50px);
-  transition: all 0.8s ease-out;
-}
-
-.scroll-reveal.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.backdrop-blur-custom {
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+@media (prefers-reduced-motion: reduce) {
+  .rise,
+  .beat,
+  .orb {
+    animation: none;
+  }
 }

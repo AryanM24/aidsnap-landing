@@ -1,435 +1,269 @@
-"use client"
+import type React from "react"
+import { KeyRound, Phone, ShieldOff, Trash2 } from "lucide-react"
+import { Frame, JsonLd, PLAY_URL, SITE_URL, SiteFooter, SiteHeader, button } from "@/components/site"
 
-import Image from "next/image"
-import { Star, Zap, Shield, Phone, AlertTriangle, Clock, Camera, Mic, MapPin, Heart } from "lucide-react"
-import { Navbar } from "@/components/navbar"
-import { Footer } from "@/components/footer"
-import { useEffect, useState } from "react"
+export const metadata = { alternates: { canonical: "/" } }
 
-export default function HomePage() {
-  const [isVisible, setIsVisible] = useState(false)
-  const [activeStep, setActiveStep] = useState(0)
+// What AidSnap is, for search and answer engines. Only facts the page itself states.
+const structured = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Organization",
+    name: "AidSnap",
+    url: SITE_URL,
+    logo: `${SITE_URL}/android-chrome-512x512.png`,
+    sameAs: ["https://instagram.com/aidsnap", "https://linkedin.com/company/aidsnap", "https://tiktok.com/@aidsnap"],
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "MobileApplication",
+    name: "AidSnap",
+    operatingSystem: "Android",
+    applicationCategory: "HealthApplication",
+    url: SITE_URL,
+    installUrl: PLAY_URL,
+    description:
+      "AI first aid assistant. Describe what happened by text, photo or voice and get clear step-by-step first aid, 16 built-in guides, a Medical ID, and the emergency number one tap away.",
+  },
+]
+import { HeroPhone } from "@/components/hero-phone"
+import { cn } from "@/lib/utils"
 
-  useEffect(() => {
-    setIsVisible(true)
+const i = (n: number) => ({ "--i": n }) as React.CSSProperties
 
-    // Scroll reveal functionality
-    const observerOptions = {
-      threshold: 0.1,
-      rootMargin: "0px 0px -50px 0px",
-    }
-
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("revealed")
-        }
-      })
-    }, observerOptions)
-
-    // Step tracking observer
-    const stepObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            const stepIndex = Number.parseInt(entry.target.getAttribute("data-step") || "0")
-            setActiveStep(stepIndex)
-          }
-        })
-      },
-      {
-        threshold: 0.5,
-        rootMargin: "-20% 0px -20% 0px",
-      },
-    )
-
-    // Observe all scroll-reveal elements
-    const scrollElements = document.querySelectorAll(".scroll-reveal")
-    scrollElements.forEach((el) => observer.observe(el))
-
-    // Observe step elements
-    const stepElements = document.querySelectorAll(".step-section")
-    stepElements.forEach((el) => stepObserver.observe(el))
-
-    return () => {
-      observer.disconnect()
-      stepObserver.disconnect()
-    }
-  }, [])
-
-  const steps = [
-    {
-      icon: <Camera className="w-6 h-6" />,
-      step: "Step-01",
-      title: "Point & Analyze",
-      description:
-        "Simply point your camera at the injury or describe symptoms. Our AI instantly analyzes the situation and provides immediate assessment.",
-      mockupText: "AI Analysis",
-      mockupSubtext: "Analyzing injury...",
-    },
-    {
-      icon: <Mic className="w-6 h-6" />,
-      step: "Step-02",
-      title: "Follow Voice Guidance",
-      description:
-        "Receive clear, step-by-step voice instructions for immediate care. Our AI guides you through each action with calm, professional direction.",
-      mockupText: "Voice Guidance",
-      mockupSubtext: "Apply pressure to wound...",
-    },
-    {
-      icon: <Phone className="w-6 h-6" />,
-      step: "Step-03",
-      title: "Connect Emergency Services",
-      description:
-        "When needed, instantly connect with emergency services. Your location and situation details are automatically shared with responders.",
-      mockupText: "Emergency Services",
-      mockupSubtext: "Connecting to 911...",
-    },
-  ]
-
+/** Two-tone heading: the claim in ink, the second line in muted. */
+function Heading({ a, b, className }: { a: string; b?: string; className?: string }) {
   return (
-    <div className="min-h-screen bg-[#222222] text-white overflow-hidden">
-      <Navbar />
+    <h2 className={cn("text-3xl font-medium leading-tight tracking-tight md:text-5xl", className)}>
+      {a}
+      {b ? (
+        <>
+          <br />
+          <span className="text-muted-foreground">{b}</span>
+        </>
+      ) : null}
+    </h2>
+  )
+}
 
-      {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 pt-48 pb-32 md:pt-56 md:pb-40">
-        <div
-          className={`text-center space-y-8 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"}`}
-        >
-          {/* Main Heading */}
-          <div className="space-y-6">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-normal text-white leading-tight">
-              AI that saves lives
-              <br />
-              <span className="text-[#F87171]">in emergencies</span>
-            </h1>
-            <p className="text-lg md:text-xl text-gray-300 max-w-4xl mx-auto leading-relaxed">
-              Get instant, life-saving first aid guidance powered by AI. AidSnap provides step-by-step emergency
-              instructions when every second counts.
-            </p>
+/** Cells divided by 1px lines in the frame's color: the grid gap shows the border color behind. */
+const cells = "grid gap-px bg-border"
+
+const connectors = [
+  // Apple's HIG: show the Health icon exactly as supplied, with no mask, border or backing.
+  { name: "Apple Health", icon: "/connectors/apple-health.png", bare: true },
+  { name: "Health Connect", icon: "/connectors/health-connect.png", inset: true },
+  { name: "WHOOP", icon: "/connectors/whoop.png" },
+  { name: "Oura", icon: "/connectors/oura.png" },
+  { name: "Withings", icon: "/connectors/withings.png" },
+  { name: "Dexcom", icon: "/connectors/dexcom.png" },
+]
+
+function Cell({ title, body, children, className }: { title: string; body: string; children: React.ReactNode; className?: string }) {
+  return (
+    <div className={cn("flex flex-col justify-between gap-10 bg-background p-6 md:p-8", className)}>
+      <div className="flex min-h-[260px] flex-1 items-center justify-center">{children}</div>
+      <div className="space-y-1">
+        <h3 className="font-medium">{title}</h3>
+        <p className="text-sm text-muted-foreground">{body}</p>
+      </div>
+    </div>
+  )
+}
+
+function LiveVisual() {
+  return (
+    <div className="flex w-full max-w-md flex-col items-center gap-6">
+      <div className="orb size-24 rounded-full" aria-hidden />
+      <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <span className="size-2 rounded-full bg-positive" />
+        Listening
+        <span className="font-mono tabular-nums">01:24</span>
+      </div>
+      <div className="w-full space-y-2 text-[15px]">
+        <p className="ml-auto w-fit rounded-xl bg-muted/60 px-3 py-2">I&apos;ve been pressing for five minutes.</p>
+        <p className="w-fit rounded-xl bg-muted/60 px-3 py-2">Good. Keep pressing and don&apos;t lift the cloth to check.</p>
+      </div>
+    </div>
+  )
+}
+
+function MedicalIdVisual() {
+  const rows = [
+    ["Blood type", "O+"],
+    ["Allergies", "Penicillin"],
+    ["Conditions", "Asthma"],
+    ["Emergency contact", "Ravi Patel"],
+  ]
+  return (
+    <div className="w-full max-w-[280px] -rotate-2 rounded-2xl border bg-background p-5 shadow-[0_12px_32px_-12px_rgb(0_0_0/0.2)]">
+      <p className="text-xs text-muted-foreground">Medical ID</p>
+      <p className="mt-1 text-[22px] font-medium tracking-tight">Maya Patel</p>
+      <dl className="mt-4 space-y-2 text-sm">
+        {rows.map(([k, v]) => (
+          <div key={k} className="flex justify-between gap-4 border-t pt-2">
+            <dt className="text-muted-foreground">{k}</dt>
+            <dd>{v}</dd>
           </div>
+        ))}
+      </dl>
+    </div>
+  )
+}
 
-          {/* App Preview */}
-          <div className="mt-20 relative">
-            <div className="relative mx-auto max-w-5xl">
-              {/* Main 3D Mockup */}
-                <div className="relative float-animation">
-                <video
-                  src="/iphone-tabs-zoom-in.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="mx-auto  w-full max-w-[900px]"
-                />
-
-                </div>
-            </div>
-          </div>
+function StepVisual() {
+  return (
+    <div className="w-full max-w-[280px] space-y-5">
+      <div className="space-y-2">
+        <p className="font-mono text-xs tabular-nums text-muted-foreground">Step 6 of 10</p>
+        <div className="h-1 rounded-full bg-muted">
+          <div className="h-1 w-[60%] rounded-full bg-foreground" />
         </div>
+      </div>
+      <p className="text-xl font-medium leading-snug tracking-tight">Push hard and fast in the center of the chest.</p>
+      <div className="flex items-center gap-3 rounded-2xl bg-muted/60 p-3">
+        <span className="beat size-10 shrink-0 rounded-full bg-foreground" aria-hidden />
+        <div className="text-sm">
+          <p>Push to the beat</p>
+          <p className="font-mono tabular-nums text-muted-foreground">110 a minute</p>
+        </div>
+      </div>
+    </div>
+  )
+}
 
-        {/* Features Showcase */}
-        <section id="features-section" className="mt-32 md:mt-40 scroll-reveal">
-          <div className="text-center mb-20">
-            <p className="text-[#F87171] text-sm font-medium mb-4 uppercase tracking-wider">Features</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Life-saving AI in your pocket</h2>
-            <p className="text-lg text-gray-300 max-w-3xl mx-auto">
-              Advanced AI trained on medical protocols to provide instant, accurate first aid guidance when you need it
-              most.
-            </p>
+function CallVisual() {
+  return (
+    <div className="w-full max-w-sm rounded-3xl border bg-background p-5 shadow-[0_12px_32px_-12px_rgb(0_0_0/0.2)]">
+      <div className="mx-auto mb-4 h-1 w-9 rounded-full bg-muted" />
+      <p className="text-center text-lg font-medium">Call 911?</p>
+      <p className="mt-1 text-center text-sm text-muted-foreground">
+        Emergency services <span className="font-mono tabular-nums">911</span>
+      </p>
+      <div className="mt-5 grid grid-cols-2 gap-2">
+        <span className="flex h-11 items-center justify-center rounded-lg bg-muted text-sm">Cancel</span>
+        <span className="flex h-11 items-center justify-center gap-2 rounded-lg bg-signal text-sm font-medium text-signal-foreground">
+          <Phone className="size-4" strokeWidth={1.5} />
+          Call 911
+        </span>
+      </div>
+    </div>
+  )
+}
+
+const privacy = [
+  {
+    icon: KeyRound,
+    title: "Your records stay on your phone",
+    body: "Apple Health and Health Connect records never leave it. AidSnap sends only a short summary with your question.",
+  },
+  {
+    icon: ShieldOff,
+    title: "No ads, no trackers, never sold",
+    body: "No advertising or analytics software. Health data is used only to answer you.",
+  },
+  {
+    icon: Trash2,
+    title: "Delete it all from Settings",
+    body: "Forget what AidSnap remembers, disconnect a wearable, or delete your account and everything with it.",
+  },
+]
+
+export default function Home() {
+  return (
+    <>
+      <JsonLd data={structured} />
+      <SiteHeader />
+      <main className="overflow-x-clip">
+        {/* Hero: the original structure, centered text with the product below it. */}
+        <Frame className="px-4 pb-14 pt-20 text-center sm:px-8 md:pt-24">
+          <h1 className="rise mx-auto max-w-4xl text-[40px] font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
+            AI that saves lives
+            <br />
+            <span className="text-muted-foreground">in emergencies</span>
+          </h1>
+          <p className="rise mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl" style={i(1)}>
+            Get instant, life-saving first aid guidance powered by AI. AidSnap provides step-by-step emergency
+            instructions when every second counts.
+          </p>
+        </Frame>
+        <Frame>
+          <HeroPhone />
+        </Frame>
+
+        <Frame className="px-4 py-16 text-center sm:px-8 md:py-20">
+          <h2 className="text-2xl font-medium tracking-tight md:text-3xl">Works with the health data you already have</h2>
+          <p className="mt-3 text-muted-foreground">Off until you connect one. Disconnect any time.</p>
+          <ul className="mt-12 grid grid-cols-2 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">
+            {connectors.map((c) => (
+              <li key={c.name} className="flex flex-col items-center gap-4">
+                {c.bare ? (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img src={c.icon} alt="" width={64} height={64} loading="lazy" decoding="async" className="size-16" />
+                ) : (
+                  <span className="flex size-16 items-center justify-center overflow-hidden rounded-[22.5%] bg-white outline outline-1 -outline-offset-1 outline-black/10">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={c.icon} alt="" width={64} height={64} loading="lazy" decoding="async" className={c.inset ? "size-[68%]" : "size-full"} />
+                  </span>
+                )}
+                <span className="text-sm text-muted-foreground">{c.name}</span>
+              </li>
+            ))}
+          </ul>
+        </Frame>
+
+        <Frame id="features" className="px-4 py-16 sm:px-8 md:py-20">
+          <Heading a="Everything for the next ten minutes." b="Nothing you have to learn first." />
+        </Frame>
+        <Frame>
+          <div className={cn(cells, "grid-flow-dense lg:grid-cols-3")}>
+            <Cell
+              className="lg:col-span-2"
+              title="Talk it through, hands free"
+              body="Start Live and speak. AidSnap listens, answers out loud and can look through your camera, so your hands stay where they're needed."
+            >
+              <LiveVisual />
+            </Cell>
+            <Cell title="Medical ID" body="Allergies, conditions, medications and who to call, ready for a responder.">
+              <MedicalIdVisual />
+            </Cell>
+            <Cell title="Guides, one step at a time" body="16 first aid guides based on AHA, Red Cross and NHS guidance, with timers and a CPR beat.">
+              <StepVisual />
+            </Cell>
+            <Cell
+              className="lg:col-span-2"
+              title="The right number, one tap away"
+              body="AidSnap knows the emergency numbers for your region. It never calls on its own: you tap, it asks once, you talk."
+            >
+              <CallVisual />
+            </Cell>
           </div>
+        </Frame>
 
-          {/* 2x3 Feature Grid */}
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-12 mb-20 max-w-6xl mx-auto">
-            {[
-              {
-                icon: <Zap className="w-8 h-8 text-white" />,
-                title: "Instant Diagnosis",
-                description:
-                  "Describe symptoms or take a photo. Get immediate AI-powered assessment and step-by-step first aid instructions.",
-              },
-              {
-                icon: <Phone className="w-8 h-8 text-white" />,
-                title: "Emergency Contacts",
-                description:
-                  "One-tap access to emergency services. Automatically shares your location and situation details with responders.",
-              },
-              {
-                icon: <Shield className="w-8 h-8 text-white" />,
-                title: "Medical Grade AI",
-                description:
-                  "Trained on certified medical protocols and continuously updated with the latest first aid guidelines.",
-              },
-              {
-                icon: <Camera className="w-8 h-8 text-white" />,
-                title: "Visual Recognition",
-                description:
-                  "Point your camera at injuries or symptoms for instant AI-powered analysis and treatment recommendations.",
-              },
-              {
-                icon: <Mic className="w-8 h-8 text-white" />,
-                title: "Voice Guidance",
-                description:
-                  "Hands-free voice instructions guide you through critical first aid procedures step-by-step.",
-              },
-              {
-                icon: <MapPin className="w-8 h-8 text-white" />,
-                title: "Location Services",
-                description:
-                  "Automatic location detection helps emergency services find you faster in critical situations.",
-              },
-            ].map((feature, index) => (
-              <div
-                key={index}
-                className="text-center space-y-6 p-8 bg-[#121212]/30 backdrop-blur-custom border border-white/5 rounded-3xl hover:border-[#F87171]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#F87171]/10 scroll-reveal"
-              >
-                <div className="mx-auto w-16 h-16 bg-[#F87171] rounded-full flex items-center justify-center">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold text-white">{feature.title}</h3>
-                <p className="text-gray-300 leading-relaxed text-sm">{feature.description}</p>
+        <Frame className="px-4 py-16 sm:px-8 md:py-20">
+          <Heading a="Private by default." />
+        </Frame>
+        <Frame>
+          <div className={cn(cells, "md:grid-cols-3")}>
+            {privacy.map(({ icon: Icon, title, body }) => (
+              <div key={title} className="space-y-3 bg-background p-6 md:p-8">
+                <Icon className="size-6" strokeWidth={1.5} />
+                <h3 className="pt-6 font-medium">{title}</h3>
+                <p className="text-sm text-muted-foreground">{body}</p>
               </div>
             ))}
           </div>
-        </section>
+        </Frame>
 
-        {/* How It Works Section */}
-        <section className="mt-32 md:mt-40 scroll-reveal">
-          <div className="text-center mb-20">
-            <p className="text-[#F87171] text-sm font-medium mb-4 uppercase tracking-wider">How it works</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Emergency Response Process</h2>
-          </div>
-
-          <div className="max-w-6xl mx-auto space-y-24">
-            {/* Step 1 */}
-            <div className="step-section grid md:grid-cols-2 gap-16 items-center" data-step={0}>
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div
-                    className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
-                      activeStep === 0 ? "bg-[#F87171]" : "bg-gray-600"
-                    }`}
-                  >
-                    <Camera className={`w-6 h-6 ${activeStep === 0 ? "text-white" : "text-gray-400"}`} />
-                  </div>
-                  <div>
-                    <p className="text-[#F87171] text-sm font-medium mb-2 uppercase tracking-wider">Step-01</p>
-                    <h3 className="text-3xl font-bold text-white mb-4">Point & Analyze</h3>
-                    <p className="text-gray-300 leading-relaxed text-lg">
-                      Simply point your camera at the injury or describe symptoms. Our AI instantly analyzes the
-                      situation and provides immediate assessment.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-3xl p-8 h-80 flex items-center justify-center">
-                <div className="bg-white rounded-2xl p-8 w-full max-w-sm text-center shadow-lg">
-                  <div className="w-16 h-16 bg-[#F87171] rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Camera className="w-8 h-8 text-white" />
-                  </div>
-                  <h4 className="text-xl font-semibold text-gray-800 mb-2">AI Analysis</h4>
-                  <p className="text-gray-600 mb-4">Analyzing injury...</p>
-                  <div className="bg-gray-100 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm text-gray-600">Analyzing...</span>
-                      <span className="text-sm text-[#F87171]">85%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
-                      <div className="bg-[#F87171] h-2 rounded-full w-4/5 transition-all duration-1000"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Step 2 */}
-            <div className="step-section grid md:grid-cols-2 gap-16 items-center" data-step={1}>
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div
-                    className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
-                      activeStep === 1 ? "bg-[#F87171]" : "bg-gray-600"
-                    }`}
-                  >
-                    <Mic className={`w-6 h-6 ${activeStep === 1 ? "text-white" : "text-gray-400"}`} />
-                  </div>
-                  <div>
-                    <p className="text-[#F87171] text-sm font-medium mb-2 uppercase tracking-wider">Step-02</p>
-                    <h3 className="text-3xl font-bold text-white mb-4">Follow Voice Guidance</h3>
-                    <p className="text-gray-300 leading-relaxed text-lg">
-                      Receive clear, step-by-step voice instructions for immediate care. Our AI guides you through each
-                      action with calm, professional direction.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-3xl p-8 h-80 flex items-center justify-center">
-                <div className="bg-white rounded-2xl p-8 w-full max-w-sm text-center shadow-lg">
-                  <div className="w-16 h-16 bg-[#F87171] rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Mic className="w-8 h-8 text-white" />
-                  </div>
-                  <h4 className="text-xl font-semibold text-gray-800 mb-2">Voice Guidance</h4>
-                  <p className="text-gray-600 mb-4">Step 2 of 5 complete</p>
-                  <div className="bg-gray-100 rounded-lg p-4">
-                    <div className="flex justify-between text-sm text-gray-500 mb-2">
-                      <span>Progress</span>
-                      <span>40%</span>
-                    </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2 mb-3">
-                      <div className="bg-[#F87171] h-2 rounded-full w-2/5"></div>
-                    </div>
-                    <p className="text-sm text-gray-700 text-left">
-                      "Apply direct pressure to the wound using a clean cloth..."
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Step 3 */}
-            <div className="step-section grid md:grid-cols-2 gap-16 items-center" data-step={2}>
-              <div className="space-y-6">
-                <div className="flex items-start space-x-4">
-                  <div
-                    className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 transition-all duration-500 ${
-                      activeStep === 2 ? "bg-[#F87171]" : "bg-gray-600"
-                    }`}
-                  >
-                    <Phone className={`w-6 h-6 ${activeStep === 2 ? "text-white" : "text-gray-400"}`} />
-                  </div>
-                  <div>
-                    <p className="text-[#F87171] text-sm font-medium mb-2 uppercase tracking-wider">Step-03</p>
-                    <h3 className="text-3xl font-bold text-white mb-4">Connect Emergency Services</h3>
-                    <p className="text-gray-300 leading-relaxed text-lg">
-                      When needed, instantly connect with emergency services. Your location and situation details are
-                      automatically shared with responders.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="rounded-3xl p-8 h-80 flex items-center justify-center">
-                <div className="bg-white rounded-2xl p-8 w-full max-w-sm text-center shadow-lg">
-                  <div className="w-16 h-16 bg-[#F87171] rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Phone className="w-8 h-8 text-white" />
-                  </div>
-                  <h4 className="text-xl font-semibold text-gray-800 mb-2">Emergency Services</h4>
-                  <p className="text-gray-600 mb-4">Connected to 911</p>
-                  <div className="bg-gray-100 rounded-lg p-4">
-                    <div className="flex items-center justify-center space-x-2 mb-3">
-                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-sm text-gray-600">Connected</span>
-                    </div>
-                    <div className="text-left space-y-2">
-                      <p className="text-sm text-gray-600">📍 Location shared</p>
-                      <p className="text-sm text-gray-600">🚑 ETA: 7 minutes</p>
-                      <p className="text-sm text-gray-600">📋 Medical info sent</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            {/* Disclaimer */}
-            <div className="w-full flex justify-center">
-              <p className="text-xs text-gray-400 text-center mt-2 max-w-md">
-                Aidsnap Agent is currently in its beta-testing phase and will not be available for the near future.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        {/* Emergency Protocols Showcase */}
-        <section id="emergency-section" className="mt-32 md:mt-40 scroll-reveal">
-          <div className="text-center mb-20">
-            <p className="text-[#F87171] text-sm font-medium mb-4 uppercase tracking-wider">Emergency</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
-              Access life-saving protocols
-              <br />
-              when seconds count
-            </h2>
-          </div>
-
-          <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-16 items-start">
-            {/* Left Column - Emergency Features */}
-            <div className="lg:col-span-1 space-y-8">
-              {/* Cardiac Emergency */}
-              <div className="bg-[#121212]/30 backdrop-blur-custom border border-white/5 rounded-3xl p-8 hover:border-[#F87171]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#F87171]/10 cursor-pointer">
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="w-12 h-12 bg-[#F87171] rounded-full flex items-center justify-center">
-                    <Heart className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">Cardiac Emergency</h3>
-                </div>
-                <p className="text-gray-300 leading-relaxed text-sm">
-                  Get instant CPR instructions, AED guidance, and immediate response protocols for cardiac emergencies.
-                </p>
-              </div>
-
-              {/* Voice Guidance */}
-              <div className="bg-[#121212]/30 backdrop-blur-custom border border-white/5 rounded-3xl p-8 hover:border-[#F87171]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#F87171]/10 cursor-pointer">
-                <div className="flex items-center space-x-4 mb-4">
-                    <div className="w-12 h-12 bg-[#F87171] rounded-full flex items-center justify-center">
-                    <Camera className="w-6 h-6 text-white" />
-                    </div>
-                  <h3 className="text-xl font-semibold text-white">Scan Environment</h3>
-                </div>
-                <p className="text-gray-300 leading-relaxed text-sm">
-                  With AidSnap Scan, you can scan your environment to find resources that can help you in an emergency.
-                </p>
-              </div>
-
-              {/* Emergency Services */}
-              <div className="bg-[#121212]/30 backdrop-blur-custom border border-white/5 rounded-3xl p-8 hover:border-[#F87171]/30 transition-all duration-500 hover:scale-105 hover:shadow-2xl hover:shadow-[#F87171]/10 cursor-pointer">
-                <div className="flex items-center space-x-4 mb-4">
-                  <div className="w-12 h-12 bg-[#F87171] rounded-full flex items-center justify-center">
-                    <Phone className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-white">Emergency Services</h3>
-                </div>
-                <p className="text-gray-300 leading-relaxed text-sm">
-                  One-tap connection to 911 with automatic location sharing and situation details for faster response.
-                </p>
-              </div>
-            </div>
-
-            {/* Right Column - Large Mockup */}
-            <div className="lg:col-span-2">
-              <div className="rounded-3xl overflow-hidden">
-                <video
-                  src="/iphone-zoom-straight-out.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="mx-auto max-h-[800px]"
-                />
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Download Section */}
-        <section id="download-section" className="mt-32 md:mt-40 scroll-reveal">
-          <div className="bg-gray-100 rounded-3xl py-24 md:py-32 px-8 max-w-6xl mx-auto text-center">
-            <p className="text-gray-500 text-sm font-medium mb-6 uppercase tracking-wider">WELCOME TO</p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-black mb-12 leading-tight">
-              The Future of Emergency
-              <br />
-              Response.
-            </h2>
-
-            <div className="space-y-4">
-              <button className="bg-black text-white px-8 py-4 rounded-full text-lg font-medium hover:bg-gray-800 transition-colors inline-flex items-center space-x-3">
-                <span>Download Coming Soon.</span>
-              </button>
-            </div>
-          </div>
-        </section>
+        <Frame className="flex flex-col items-center px-4 py-24 text-center sm:px-8 md:py-32">
+          <Heading a="Keep it on your phone" b="before you need it." />
+          <a href={PLAY_URL} target="_blank" rel="noopener noreferrer" className={cn(button.primary, "mt-10")}>
+            Get it on Android
+          </a>
+          <p className="mt-4 text-sm text-muted-foreground">iOS coming soon. Delete your account any time.</p>
+        </Frame>
       </main>
-
-      <Footer />
-    </div>
+      <SiteFooter />
+    </>
   )
 }
