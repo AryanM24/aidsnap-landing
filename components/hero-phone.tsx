@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react"
 import { gsap } from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ArrowUp, AudioLines, ListOrdered, Menu, Plus, SquarePen } from "lucide-react"
+import { ArrowUp, AudioLines, ChevronLeft, ListOrdered, Menu, Phone as PhoneIcon, Plus, SquarePen } from "lucide-react"
 import { Keycap } from "@/components/site"
 import { cn } from "@/lib/utils"
 
@@ -141,8 +141,10 @@ export function HeroPhone() {
         .to(q("[data-m='start']"), { scale: 0.96, duration: 0.15 })
         .to(q("[data-m='start']"), { scale: 1, duration: 0.15 })
         .add(light(3))
-        .to(q("[data-m='sos']"), { scale: 1.12, duration: 0.25 })
-        .to(q("[data-m='sos']"), { scale: 1, duration: 0.25 })
+        // SOS is tapped and the Emergency screen pushes in.
+        .to(q("[data-m='sos']"), { scale: 0.92, duration: 0.15 })
+        .to(q("[data-m='sos']"), { scale: 1, duration: 0.15 })
+        .fromTo(q("[data-m='emergency']"), { xPercent: 0, x: "100%" }, { x: "0%", duration: 0.5, ease: "power3.out" })
         .to({}, { duration: 0.4 })
     })
     return () => mm.revert()
@@ -181,6 +183,33 @@ function Phone() {
             <div className="flex h-[46px] shrink-0 items-center justify-between pl-[30px] pr-[26px] pt-[3px]">
               <span className="w-[54px] text-center text-[15px] font-semibold tabular-nums tracking-[-0.01em]">9:41</span>
               <StatusIcons />
+            </div>
+            {/* The Emergency screen SOS opens (app/(app)/emergency.tsx), US numbers. Pushed in on beat 4. */}
+            <div data-m="emergency" className="absolute inset-x-0 bottom-0 top-[46px] z-10 translate-x-full bg-background px-4 text-[13px]">
+              <div className="flex h-11 items-center gap-1 text-muted-foreground">
+                <ChevronLeft className="-ml-1 size-5" strokeWidth={1.5} />
+                <span className="text-[15px] font-medium text-foreground">Emergency</span>
+              </div>
+              <div className="mt-4">
+                <span className="flex h-11 items-center justify-center gap-2 rounded-lg bg-signal text-[14px] font-medium text-signal-foreground">
+                  <PhoneIcon className="size-4" strokeWidth={1.5} />
+                  Call 911
+                </span>
+                <p className="mt-1.5 text-[12px] text-muted-foreground">Emergency services</p>
+              </div>
+              <p className="mb-2 mt-7 text-[12px] text-muted-foreground">Other numbers</p>
+              <div className="divide-y rounded-xl border bg-card dark:border-0">
+                {[
+                  ["Poison Control", "1-800-222-1222"],
+                  ["Suicide and Crisis Lifeline", "988"],
+                ].map(([label, number]) => (
+                  <div key={label} className="flex items-center gap-3 px-3 py-2.5">
+                    <PhoneIcon className="size-4 text-muted-foreground" strokeWidth={1.5} />
+                    <span className="flex-1">{label}</span>
+                    <span className="font-mono text-[12px] tabular-nums text-muted-foreground">{number}</span>
+                  </div>
+                ))}
+              </div>
             </div>
             {/* Dynamic Island, smaller on iPhone 18: about 13.5 mm wide at rest. */}
             <span className="absolute left-1/2 top-[11px] h-[25px] w-[64px] -translate-x-1/2 rounded-full bg-black" />
@@ -228,25 +257,21 @@ function Phone() {
               </div>
               <p data-m="intro">Press on the wound now and don&apos;t let go. Here is what to do:</p>
             </div>
-            <ol className="space-y-2.5">
+            {/* The reply is rendered markdown: a plain numbered list in prose. */}
+            <ol className="list-decimal space-y-1.5 pl-[18px] marker:text-muted-foreground">
               {steps.map(([action, detail], n) => (
-                <li key={n} data-m="step" className="flex gap-2">
-                  <span className="mt-px">
-                    <Keycap n={n + 1} />
-                  </span>
-                  <span>
-                    {action}
-                    <span className="block text-[11.5px] text-muted-foreground">{detail}</span>
-                  </span>
+                <li key={n} data-m="step" className="pl-0.5">
+                  {action} {detail}
                 </li>
               ))}
             </ol>
-            <div data-m="guide" className="space-y-2.5 rounded-xl border bg-card p-3">
-              <div>
+            {/* start_guide tool card, as in components/assistant-ui/tools.tsx. */}
+            <div data-m="guide" className="space-y-3 rounded-xl border bg-card p-3 dark:border-0">
+              <div className="space-y-0.5">
                 <p className="font-medium">Severe bleeding</p>
-                <p className="text-[11.5px] text-muted-foreground">Stop heavy bleeding with firm, direct pressure.</p>
+                <p className="text-[12px] text-muted-foreground">Stop heavy bleeding from a wound with firm, direct pressure.</p>
               </div>
-              <span data-m="start" className="flex h-9 items-center justify-center gap-2 rounded-lg bg-primary text-[12.5px] font-medium text-primary-foreground">
+              <span data-m="start" className="flex h-10 items-center justify-center gap-2 rounded-lg bg-primary text-[13px] font-medium text-primary-foreground">
                 <ListOrdered className="size-3.5" strokeWidth={1.5} />
                 Start step by step
               </span>
