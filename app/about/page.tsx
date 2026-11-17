@@ -1,6 +1,12 @@
+import { meta } from "@/lib/seo"
 import { Page } from "@/components/site"
 
-export const metadata = { title: "About", description: "AidSnap puts life-saving first aid knowledge in everyone's pocket, so ordinary people can act in the minutes that matter.", alternates: { canonical: "/about" } }
+export const metadata = meta({
+  title: "About",
+  description:
+    "AidSnap is an AI first aid assistant that helps people with no medical training act in the minutes before help arrives. Our mission and values.",
+  path: "/about",
+})
 
 const values = [
   ["Life first", "Every decision we make is guided by our commitment to saving and protecting human life."],

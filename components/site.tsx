@@ -107,6 +107,18 @@ export function SiteHeader() {
 
 const columns = [
   {
+    title: "First aid",
+    links: [
+      { href: "/guides/cpr", label: "CPR" },
+      { href: "/guides/choking", label: "Choking" },
+      { href: "/guides/severe-bleeding", label: "Severe bleeding" },
+      { href: "/guides/heart-attack", label: "Heart attack" },
+      { href: "/guides/stroke", label: "Stroke" },
+      { href: "/guides/burns", label: "Burns" },
+      { href: "/guides", label: "All 16 guides" },
+    ],
+  },
+  {
     title: "Product",
     links: [
       { href: "/#features", label: "Features" },
@@ -170,7 +182,7 @@ export function SiteFooter() {
             <span className="text-white/50">before help arrives.</span>
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-16">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 sm:gap-12">
           {columns.map((c) => (
             <div key={c.title} className="space-y-3">
               <p className="text-sm text-white/50">{c.title}</p>

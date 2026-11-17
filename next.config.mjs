@@ -3,6 +3,13 @@ const nextConfig = {
   // ESLint is not installed; type errors still fail the build.
   eslint: { ignoreDuringBuilds: true },
   poweredByHeader: false,
+  // Markdown twins of the pages: /privacy.md is served by app/md/[slug].
+  async rewrites() {
+    return [
+      { source: "/guides/:id.md", destination: "/md/guides/:id" },
+      { source: "/:slug(index|guides|privacy|terms|consumer-health-data|support|about|manifesto|delete-account).md", destination: "/md/:slug" },
+    ]
+  },
   async headers() {
     return [
       {

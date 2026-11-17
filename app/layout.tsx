@@ -13,7 +13,11 @@ export const metadata: Metadata = {
   title: { default: "AidSnap: AI first aid, step by step", template: "%s · AidSnap" },
   description,
   applicationName: "AidSnap",
-  openGraph: { type: "website", siteName: "AidSnap", title: "AidSnap: AI first aid, step by step", description, url: "/" },
+  category: "health",
+  keywords: ["first aid app", "AI first aid assistant", "CPR steps", "how to stop bleeding", "choking first aid", "emergency first aid guide", "medical ID app", "AidSnap"],
+  // Let search engines show large image previews and full snippets, which the guides need to be quoted well.
+  robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1, "max-video-preview": -1 } },
+  openGraph: { type: "website", siteName: "AidSnap", title: "AidSnap: AI first aid, step by step", description, url: "/", locale: "en_US" },
   twitter: { card: "summary_large_image", title: "AidSnap: AI first aid, step by step", description },
   icons: { icon: "/favicon.ico", apple: "/apple-touch-icon.png" },
   other: { "google-play-app": "app-id=com.aidsnap.app" },

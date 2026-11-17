@@ -1,6 +1,12 @@
+import { meta } from "@/lib/seo"
 import { Page } from "@/components/site"
 
-export const metadata = { title: "Manifesto", description: "Why AidSnap exists: no one should ever feel powerless when it matters most.", alternates: { canonical: "/manifesto" } }
+export const metadata = meta({
+  title: "Manifesto",
+  description:
+    "Why AidSnap exists: in an emergency most people freeze because they don't know what to do. No one should feel powerless when it matters most.",
+  path: "/manifesto",
+})
 
 export default function Manifesto() {
   return (

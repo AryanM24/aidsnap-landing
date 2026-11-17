@@ -2,7 +2,9 @@ import type React from "react"
 import { KeyRound, Phone, ShieldOff, Trash2 } from "lucide-react"
 import { Frame, JsonLd, PLAY_URL, SITE_URL, SiteFooter, SiteHeader, button } from "@/components/site"
 
-export const metadata = { alternates: { canonical: "/" } }
+export const metadata = {
+  alternates: { canonical: "/", types: { "application/rss+xml": "/feed.xml", "text/markdown": "/index.md" } },
+}
 
 // What AidSnap is, for search and answer engines. Only facts the page itself states.
 const structured = [
@@ -13,6 +15,16 @@ const structured = [
     url: SITE_URL,
     logo: `${SITE_URL}/android-chrome-512x512.png`,
     sameAs: ["https://instagram.com/aidsnap", "https://linkedin.com/company/aidsnap", "https://tiktok.com/@aidsnap"],
+    email: "aryan.mittal@aidsnap.com",
+    description: "AidSnap makes an AI first aid assistant for people with no medical training.",
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: "AidSnap",
+    alternateName: "AidSnap first aid",
+    url: SITE_URL,
+    inLanguage: "en",
   },
   {
     "@context": "https://schema.org",
@@ -24,6 +36,16 @@ const structured = [
     installUrl: PLAY_URL,
     description:
       "AI first aid assistant. Describe what happened by text, photo or voice and get clear step-by-step first aid, 16 built-in guides, a Medical ID, and the emergency number one tap away.",
+    // Free per the Terms of Service (Section 8). Google needs offers to show an app rich result.
+    offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
+    featureList: [
+      "Step-by-step first aid answers by text, photo or voice",
+      "Hands-free voice mode with the camera (Live)",
+      "16 first aid guides with timers and a CPR beat",
+      "Medical ID with allergies, conditions, medications and emergency contacts",
+      "Emergency numbers for your region, one tap away",
+      "Optional Apple Health, Health Connect, WHOOP, Oura, Withings and Dexcom connections",
+    ],
   },
 ]
 import { HeroPhone } from "@/components/hero-phone"
