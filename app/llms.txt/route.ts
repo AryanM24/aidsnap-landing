@@ -26,6 +26,7 @@ ${GUIDES.map((g) => `- [${g.title}](${SITE_URL}/guides/${g.id}): ${g.summary} ($
 - [Support and FAQ](${SITE_URL}/support)
 - [Privacy policy](${SITE_URL}/privacy)
 - [Terms of service](${SITE_URL}/terms)
+- [Consumer health data privacy policy](${SITE_URL}/consumer-health-data)
 - [Delete your account](${SITE_URL}/delete-account)
 - [Manifesto](${SITE_URL}/manifesto)
 `

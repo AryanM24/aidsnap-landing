@@ -1,12 +1,13 @@
-import { Suspense } from "react"
+import type { Metadata } from "next"
 import { LegalPage } from "@/components/legal"
+import { terms } from "@/lib/legal/terms"
 
-export const metadata = { title: "Terms of service", description: "The terms that govern your use of AidSnap.", alternates: { canonical: "/terms" } }
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description: "The agreement that governs your use of AidSnap, including its limits as first aid guidance and how disputes are resolved.",
+  alternates: { canonical: "/terms" },
+}
 
 export default function Terms() {
-  return (
-    <Suspense>
-      <LegalPage initialTab="terms" />
-    </Suspense>
-  )
+  return <LegalPage doc={terms} />
 }

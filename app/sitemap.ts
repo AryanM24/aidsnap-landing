@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next"
 import { GUIDES } from "@/lib/guides"
 import { SITE_URL } from "@/components/site"
 
-const pages = ["", "/guides", "/manifesto", "/about", "/support", "/careers", "/press", "/coming-soon", "/privacy", "/terms", "/delete-account"]
+const pages = ["", "/guides", "/manifesto", "/about", "/support", "/press", "/coming-soon", "/privacy", "/terms", "/consumer-health-data", "/delete-account"]
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [

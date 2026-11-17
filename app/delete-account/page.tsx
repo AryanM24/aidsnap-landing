@@ -20,7 +20,7 @@ const removed = [
 
 export default function DeleteAccount() {
   return (
-    <Page title="Delete your account" lead="You can delete your AidSnap account and everything stored with it at any time. It cannot be undone.">
+    <Page section="Help" title="Delete your account" lead="You can delete your AidSnap account and everything stored with it at any time. It cannot be undone.">
       <div className="space-y-14">
         <section>
           <h2 className="mb-5 text-xl font-medium tracking-tight">In the app</h2>

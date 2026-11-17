@@ -4,7 +4,7 @@ export const metadata = { title: "Manifesto", description: "Why AidSnap exists: 
 
 export default function Manifesto() {
   return (
-    <Page title="We want to save every life.">
+    <Page section="Company" title="We want to save every life.">
       <div className="space-y-8 text-lg leading-relaxed text-muted-foreground">
         <p>
           Emergencies don&apos;t wait. Seconds matter. Yet in those critical moments, most people freeze, not because

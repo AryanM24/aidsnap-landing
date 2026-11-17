@@ -3,7 +3,7 @@ import Link from "next/link"
 import { notFound } from "next/navigation"
 import { Ban } from "lucide-react"
 import { GUIDES, URGENCY_LABEL, getGuide } from "@/lib/guides"
-import { Frame, JsonLd, Keycap, PLAY_URL, SITE_URL, SiteFooter, SiteHeader, button } from "@/components/site"
+import { Frame, JsonLd, Keycap, PLAY_URL, SITE_URL, button , Shell } from "@/components/site"
 import { cn } from "@/lib/utils"
 
 export const dynamicParams = false
@@ -44,8 +44,7 @@ export default async function GuidePage({ params }: { params: Promise<{ id: stri
   const url = `${SITE_URL}/guides/${g.id}`
 
   return (
-    <>
-      <SiteHeader />
+    <Shell>
       <JsonLd
         data={{
           "@context": "https://schema.org",
@@ -74,8 +73,7 @@ export default async function GuidePage({ params }: { params: Promise<{ id: stri
           ],
         }}
       />
-      <main>
-        <Frame className="px-4 py-16 sm:px-8 md:py-20">
+        <Frame band className="px-4 pb-14 pt-16 sm:px-8 md:pb-20 md:pt-24">
           <div className="max-w-3xl">
             <nav aria-label="Breadcrumb" className="mb-6 text-sm text-muted-foreground">
               <Link href="/guides" className="transition-colors hover:text-foreground">
@@ -84,7 +82,7 @@ export default async function GuidePage({ params }: { params: Promise<{ id: stri
               <span className="px-2">/</span>
               <span>{URGENCY_LABEL[g.urgency]}</span>
             </nav>
-            <h1 className="text-4xl font-medium tracking-tight md:text-5xl">{g.title}</h1>
+            <h1 className="text-4xl font-medium tracking-tight md:text-6xl">{g.title}</h1>
             <p className="mt-4 text-lg text-muted-foreground">{g.summary}</p>
           </div>
         </Frame>
@@ -160,7 +158,7 @@ export default async function GuidePage({ params }: { params: Promise<{ id: stri
           </Frame>
         ) : null}
 
-        <Frame className="flex flex-col items-start justify-between gap-6 px-4 py-12 sm:px-8 md:flex-row md:items-center">
+        <Frame grow className="flex flex-col items-start justify-between gap-6 px-4 py-12 sm:px-8 md:flex-row md:items-center">
           <p className="max-w-md text-lg">
             AidSnap walks you through this guide one step at a time
             {g.tool === "metronome" ? ", with a CPR beat" : g.steps.some((s) => s.timerSec) ? ", with a timer" : ""}, and keeps
@@ -170,8 +168,6 @@ export default async function GuidePage({ params }: { params: Promise<{ id: stri
             Get it on Android
           </a>
         </Frame>
-      </main>
-      <SiteFooter />
-    </>
+    </Shell>
   )
 }

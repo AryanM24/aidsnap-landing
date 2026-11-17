@@ -11,6 +11,7 @@ const values = [
 export default function About() {
   return (
     <Page
+      section="Company"
       title="About AidSnap"
       lead="We want to put life-saving first aid knowledge in everyone's pocket, so ordinary people can act in the minutes that matter."
     >

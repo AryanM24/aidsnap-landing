@@ -16,6 +16,7 @@ const order: Urgency[] = ["life-threatening", "soon", "everyday"]
 export default function Guides() {
   return (
     <Page
+      section="First aid"
       wide
       title="First aid guides"
       lead="Clear steps for 16 emergencies, the same guides AidSnap walks you through in the app. In an emergency, call your local emergency number first."

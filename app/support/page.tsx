@@ -32,7 +32,7 @@ const faqs = [
 
 export default function Support() {
   return (
-    <Page title="Support" lead="Answers to common questions. For anything else, email us.">
+    <Page section="Help" title="Support" lead="Answers to common questions. For anything else, email us.">
       <JsonLd
         data={{
           "@context": "https://schema.org",

@@ -1,12 +1,13 @@
-import { Suspense } from "react"
+import type { Metadata } from "next"
 import { LegalPage } from "@/components/legal"
+import { privacy } from "@/lib/legal/privacy"
 
-export const metadata = { title: "Privacy policy", description: "How AidSnap collects, uses and protects your information.", alternates: { canonical: "/privacy" } }
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description: "How AidSnap collects, uses, discloses, stores and deletes personal information, including health information, and the rights you have.",
+  alternates: { canonical: "/privacy" },
+}
 
 export default function Privacy() {
-  return (
-    <Suspense>
-      <LegalPage />
-    </Suspense>
-  )
+  return <LegalPage doc={privacy} />
 }

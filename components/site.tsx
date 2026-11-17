@@ -57,10 +57,26 @@ function Marks({ dark }: { dark?: boolean }) {
  * The page frame: two rails down the content edges, a full-width line under every section,
  * and a square where they cross. Everything sits inside it.
  */
-export function Frame({ children, className, id, dark }: { children: React.ReactNode; className?: string; id?: string; dark?: boolean }) {
+export function Frame({
+  children,
+  className,
+  id,
+  dark,
+  band,
+  grow,
+}: {
+  children: React.ReactNode
+  className?: string
+  id?: string
+  dark?: boolean
+  /** A tinted full-width band, for page title areas. */
+  band?: boolean
+  /** Stretch to fill the rest of the screen, rails and all, so the footer sits at the bottom. */
+  grow?: boolean
+}) {
   return (
-    <section id={id} className={cn("scroll-mt-16 border-b", dark && "border-white/10")}>
-      <div className={cn("relative mx-auto max-w-6xl border-x", dark && "border-white/10", className)}>
+    <section id={id} className={cn("scroll-mt-16 border-b", dark && "border-white/10", band && "bg-muted/50", grow && "flex flex-1 flex-col")}>
+      <div className={cn("relative mx-auto w-full max-w-6xl border-x", dark && "border-white/10", grow && "flex-1", className)}>
         <Marks dark={dark} />
         {children}
       </div>
@@ -118,7 +134,6 @@ const columns = [
     links: [
       { href: "/manifesto", label: "Manifesto" },
       { href: "/about", label: "About" },
-      { href: "/careers", label: "Careers" },
       { href: "/press", label: "Press" },
     ],
   },
@@ -128,6 +143,7 @@ const columns = [
       { href: "/support", label: "Support" },
       { href: "/privacy", label: "Privacy" },
       { href: "/terms", label: "Terms" },
+      { href: "/consumer-health-data", label: "Consumer health data" },
       { href: "/delete-account", label: "Delete account" },
       { href: CONTACT, label: "Contact" },
     ],
@@ -209,27 +225,92 @@ export function SiteFooter() {
   )
 }
 
-/** Shell for every inner page: header, a titled column, footer. */
-export function Page({ title, lead, children, wide }: { title: string; lead?: string; children?: React.ReactNode; wide?: boolean }) {
+const compactLinks = [
+  { href: "/guides", label: "Guides" },
+  { href: "/support", label: "Support" },
+  { href: "/press", label: "Press" },
+  { href: "/privacy", label: "Privacy" },
+  { href: "/terms", label: "Terms" },
+  { href: "/consumer-health-data", label: "Consumer health data" },
+  { href: "/delete-account", label: "Delete account" },
+  { href: CONTACT, label: "Contact" },
+]
+
+/** The one-row footer for inner pages; the big stylized footer is for the home page. */
+export function CompactFooter() {
   return (
-    <>
+    <footer>
+      <Frame className="flex flex-col gap-6 px-4 py-8 sm:px-8 md:flex-row md:items-center md:justify-between">
+        <Link href="/" className="flex w-fit items-center gap-2 text-[15px] font-medium tracking-tight">
+          <Mark className="size-5" />
+          AidSnap
+        </Link>
+        <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          {compactLinks.map((l) => (
+            <li key={l.label}>
+              <Link href={l.href} className="transition-colors hover:text-foreground">
+                {l.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+        <p className="text-sm text-muted-foreground">© {new Date().getFullYear()} AidSnap Inc.</p>
+      </Frame>
+    </footer>
+  )
+}
+
+/** The title band at the top of every inner page: a small section name, the title, the lead. */
+export function PageTitle({ section, title, lead, children }: { section?: string; title: string; lead?: string; children?: React.ReactNode }) {
+  return (
+    <Frame band className="px-4 pb-14 pt-16 sm:px-8 md:pb-20 md:pt-24">
+      <div className="max-w-3xl">
+        {section ? <p className="rise mb-5 text-sm text-muted-foreground">{section}</p> : null}
+        <h1 className="rise text-4xl font-medium tracking-tight md:text-6xl" style={{ "--i": 1 } as React.CSSProperties}>
+          {title}
+        </h1>
+        {lead ? (
+          <p className="rise mt-5 max-w-2xl text-lg text-muted-foreground md:text-xl" style={{ "--i": 2 } as React.CSSProperties}>
+            {lead}
+          </p>
+        ) : null}
+        {children}
+      </div>
+    </Frame>
+  )
+}
+
+/** Inner pages fill at least the screen: the last Frame (with `grow`) takes the space, the footer sits at the bottom. */
+export function Shell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex min-h-svh flex-col">
       <SiteHeader />
-      <main>
-        <Frame className="px-4 py-20 sm:px-8 md:py-28">
-          <div className={cn(!wide && "max-w-3xl")}>
-            <h1 className="rise text-4xl font-medium tracking-tight md:text-5xl">{title}</h1>
-            {lead ? (
-              <p className="rise mt-4 max-w-2xl text-lg text-muted-foreground" style={{ "--i": 1 } as React.CSSProperties}>
-                {lead}
-              </p>
-            ) : null}
-          </div>
-        </Frame>
-        <Frame className="px-4 py-16 sm:px-8 md:py-20">
-          <div className={cn(!wide && "max-w-3xl")}>{children}</div>
-        </Frame>
-      </main>
-      <SiteFooter />
-    </>
+      <main className="flex flex-1 flex-col">{children}</main>
+      <CompactFooter />
+    </div>
+  )
+}
+
+/** Shell for every inner page: header, the title band, the content, the compact footer. */
+export function Page({
+  section,
+  title,
+  lead,
+  children,
+  wide,
+}: {
+  section?: string
+  title: string
+  lead?: string
+  children?: React.ReactNode
+  wide?: boolean
+}) {
+  return (
+    <Shell>
+      <PageTitle section={section} title={title} lead={lead} />
+      <Frame grow className="px-4 py-16 sm:px-8 md:py-20">
+        <div className={cn(!wide && "max-w-3xl")}>{children}</div>
+      </Frame>
+    </Shell>
   )
 }
