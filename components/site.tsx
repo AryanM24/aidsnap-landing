@@ -1,6 +1,7 @@
 import type React from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
+import { DownloadMenu } from "@/components/download-menu"
 
 export const SITE_URL = "https://www.aidsnap.com"
 export const PLAY_URL = "https://play.google.com/store/apps/details?id=com.aidsnap.app"
@@ -85,8 +86,7 @@ export function Frame({
 }
 
 const nav = [
-  { href: "/guides", label: "Guides" },
-  { href: "/manifesto", label: "Manifesto" },
+  { href: "/#features", label: "Features" },
   { href: "/about", label: "About" },
   { href: "/support", label: "Support" },
 ]
@@ -110,9 +110,7 @@ export function SiteHeader() {
               {l.label}
             </Link>
           ))}
-          <a href={PLAY_URL} target="_blank" rel="noopener noreferrer" className={cn(button.primary, "ml-2 h-9 px-4 text-sm")}>
-            Get the app
-          </a>
+          <DownloadMenu />
         </nav>
       </div>
     </header>
