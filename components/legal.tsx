@@ -34,7 +34,7 @@ export function LegalPage({ initialTab = "privacy" }: { initialTab?: string }) {
     <>
       <SiteHeader />
 
-      <main className="mx-auto max-w-6xl px-4 pb-24 pt-20 sm:px-6 md:pt-28">
+      <main className="mx-auto max-w-6xl border-x px-4 pb-24 pt-20 sm:px-8 md:pt-28">
         {/* Hero Section */}
         <div className="mb-16">
           <h1 className="text-4xl font-medium tracking-tight md:text-5xl">Legal Policies</h1>

@@ -36,6 +36,32 @@ export function Keycap({ n, active }: { n: number; active?: boolean }) {
   )
 }
 
+/** Small squares where the rails meet a section line, echoing the viewfinder in the mark. */
+function Marks({ dark }: { dark?: boolean }) {
+  const m = cn("absolute -bottom-[4.5px] z-10 size-2 border", dark ? "border-white/20 bg-ink" : "bg-background")
+  return (
+    <>
+      <span className={cn(m, "-left-[4.5px]")} aria-hidden />
+      <span className={cn(m, "-right-[4.5px]")} aria-hidden />
+    </>
+  )
+}
+
+/**
+ * The page frame: two rails down the content edges, a full-width line under every section,
+ * and a square where they cross. Everything sits inside it.
+ */
+export function Frame({ children, className, id, dark }: { children: React.ReactNode; className?: string; id?: string; dark?: boolean }) {
+  return (
+    <section id={id} className={cn("scroll-mt-16 border-b", dark && "border-white/10")}>
+      <div className={cn("relative mx-auto max-w-6xl border-x", dark && "border-white/10", className)}>
+        <Marks dark={dark} />
+        {children}
+      </div>
+    </section>
+  )
+}
+
 const nav = [
   { href: "/manifesto", label: "Manifesto" },
   { href: "/about", label: "About" },
@@ -45,7 +71,8 @@ const nav = [
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b bg-background">
-      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 sm:px-6">
+      <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between border-x px-4 sm:px-6">
+        <Marks />
         <Link href="/" className="flex items-center gap-2 text-[17px] font-medium tracking-tight">
           <Mark className="size-6" />
           AidSnap
@@ -119,8 +146,8 @@ function Corners() {
 
 export function SiteFooter() {
   return (
-    <footer className="overflow-hidden border-t border-white/10 bg-ink text-white">
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 pb-16 pt-20 sm:px-6 md:grid-cols-[1fr_auto]">
+    <footer className="overflow-hidden bg-ink text-white">
+      <Frame dark className="grid gap-12 px-4 pb-16 pt-20 sm:px-6 md:grid-cols-[1fr_auto]">
         <div className="max-w-sm space-y-6">
           <p className="text-2xl font-medium leading-snug tracking-tight">
             Made for the minutes
@@ -148,8 +175,8 @@ export function SiteFooter() {
             </div>
           ))}
         </div>
-      </div>
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-white/10 px-4 py-6 text-sm text-white/50 sm:px-6">
+      </Frame>
+      <Frame dark className="flex flex-wrap items-center justify-between gap-4 px-4 py-6 text-sm text-white/50 sm:px-6">
         <p>© {new Date().getFullYear()} AidSnap Inc.</p>
         <ul className="flex gap-4">
           {social.map((s) => (
@@ -160,8 +187,8 @@ export function SiteFooter() {
             </li>
           ))}
         </ul>
-      </div>
-      <div className="mt-8 flex justify-center px-4" aria-hidden>
+      </Frame>
+      <div className="relative mx-auto flex max-w-6xl justify-center border-x border-white/10 px-4 pt-12" aria-hidden>
         <div className="relative translate-y-[22%] px-[3vw] pt-[2.5vw]">
           <Corners />
           <p className="select-none text-[19vw] font-medium leading-[0.8] tracking-[-0.06em] text-white/[0.08] xl:text-[260px]">
@@ -178,14 +205,20 @@ export function Page({ title, lead, children, wide }: { title: string; lead?: st
   return (
     <>
       <SiteHeader />
-      <main className={cn("mx-auto px-4 pb-24 pt-20 sm:px-6 md:pt-28", wide ? "max-w-6xl" : "max-w-3xl")}>
-        <h1 className="rise text-4xl font-medium tracking-tight md:text-5xl">{title}</h1>
-        {lead ? (
-          <p className="rise mt-4 max-w-2xl text-lg text-muted-foreground" style={{ "--i": 1 } as React.CSSProperties}>
-            {lead}
-          </p>
-        ) : null}
-        <div className="mt-16">{children}</div>
+      <main>
+        <Frame className="px-4 py-20 sm:px-8 md:py-28">
+          <div className={cn(!wide && "max-w-3xl")}>
+            <h1 className="rise text-4xl font-medium tracking-tight md:text-5xl">{title}</h1>
+            {lead ? (
+              <p className="rise mt-4 max-w-2xl text-lg text-muted-foreground" style={{ "--i": 1 } as React.CSSProperties}>
+                {lead}
+              </p>
+            ) : null}
+          </div>
+        </Frame>
+        <Frame className="px-4 py-16 sm:px-8 md:py-20">
+          <div className={cn(!wide && "max-w-3xl")}>{children}</div>
+        </Frame>
       </main>
       <SiteFooter />
     </>
