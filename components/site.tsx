@@ -73,7 +73,7 @@ const columns = [
   {
     title: "Product",
     links: [
-      { href: "/#how", label: "How it works" },
+      { href: "/#features", label: "Features" },
       { href: PLAY_URL, label: "Android" },
       { href: "/coming-soon", label: "iOS" },
     ],
@@ -104,27 +104,42 @@ const social = [
   { href: "https://tiktok.com/@aidsnap", label: "TikTok" },
 ]
 
+/** Viewfinder corners from the mark, drawn around any block. */
+function Corners() {
+  const c = "absolute size-[6vw] max-w-16 max-h-16 border-white/25"
+  return (
+    <>
+      <span className={cn(c, "left-0 top-0 rounded-tl-2xl border-l-2 border-t-2")} />
+      <span className={cn(c, "right-0 top-0 rounded-tr-2xl border-r-2 border-t-2")} />
+      <span className={cn(c, "bottom-0 left-0 rounded-bl-2xl border-b-2 border-l-2")} />
+      <span className={cn(c, "bottom-0 right-0 rounded-br-2xl border-b-2 border-r-2")} />
+    </>
+  )
+}
+
 export function SiteFooter() {
   return (
-    <footer className="border-t">
-      <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1fr_auto]">
-        <div className="max-w-xs space-y-4">
-          <Link href="/" className="flex items-center gap-2 text-[17px] font-medium tracking-tight">
-            <Mark className="size-6" />
-            AidSnap
-          </Link>
-          <p className="text-sm text-muted-foreground">
-            First aid guidance, not a diagnosis. In an emergency, call your local emergency number.
+    <footer className="overflow-hidden border-t border-white/10 bg-ink text-white">
+      <div className="mx-auto grid max-w-6xl gap-12 px-4 pb-16 pt-20 sm:px-6 md:grid-cols-[1fr_auto]">
+        <div className="max-w-sm space-y-6">
+          <p className="text-2xl font-medium leading-snug tracking-tight">
+            Made for the minutes
+            <br />
+            <span className="text-white/50">before help arrives.</span>
+          </p>
+          <p className="flex items-start gap-2 text-sm text-white/60">
+            <span className="mt-1.5 size-2 shrink-0 rounded-full bg-signal" />
+            First aid guidance, not a diagnosis. In an emergency, call your local emergency number first.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-3 sm:gap-16">
           {columns.map((c) => (
             <div key={c.title} className="space-y-3">
-              <p className="text-sm text-muted-foreground">{c.title}</p>
+              <p className="text-sm text-white/50">{c.title}</p>
               <ul className="space-y-2">
                 {c.links.map((l) => (
                   <li key={l.label}>
-                    <Link href={l.href} className="text-sm transition-colors hover:text-muted-foreground">
+                    <Link href={l.href} className="text-sm transition-colors hover:text-white/60">
                       {l.label}
                     </Link>
                   </li>
@@ -134,17 +149,25 @@ export function SiteFooter() {
           ))}
         </div>
       </div>
-      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t px-4 py-6 text-sm text-muted-foreground sm:px-6">
+      <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 border-t border-white/10 px-4 py-6 text-sm text-white/50 sm:px-6">
         <p>© {new Date().getFullYear()} AidSnap Inc.</p>
         <ul className="flex gap-4">
           {social.map((s) => (
             <li key={s.label}>
-              <a href={s.href} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-foreground">
+              <a href={s.href} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">
                 {s.label}
               </a>
             </li>
           ))}
         </ul>
+      </div>
+      <div className="mt-8 flex justify-center px-4" aria-hidden>
+        <div className="relative translate-y-[22%] px-[3vw] pt-[2.5vw]">
+          <Corners />
+          <p className="select-none text-[19vw] font-medium leading-[0.8] tracking-[-0.06em] text-white/[0.08] xl:text-[260px]">
+            AidSnap
+          </p>
+        </div>
       </div>
     </footer>
   )

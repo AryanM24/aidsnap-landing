@@ -17,6 +17,8 @@
   --border: oklch(0.92 0.004 286.32);
   --ring: oklch(0.705 0.015 286.067);
   --ease: cubic-bezier(0.2, 0, 0, 1);
+  /* Fixed in both themes: the footer and the phone body stay dark. */
+  --ink: 0.141 0.005 285.823;
   color-scheme: light;
 }
 
@@ -105,10 +107,52 @@
   animation: drift 8s linear infinite;
 }
 
+/* The phone plays one conversation on load: each part appears at its --d delay. */
+.seq {
+  animation: rise 500ms var(--ease) both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes typing {
+  0%,
+  100% {
+    opacity: 0;
+  }
+  15%,
+  85% {
+    opacity: 1;
+  }
+}
+.typing {
+  opacity: 0;
+  animation: typing 1.4s var(--ease) 1.1s both;
+}
+@keyframes dot {
+  0%,
+  100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+.typing span {
+  animation: dot 900ms var(--ease) infinite;
+}
+.typing span:nth-child(2) {
+  animation-delay: 150ms;
+}
+.typing span:nth-child(3) {
+  animation-delay: 300ms;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .rise,
   .beat,
-  .orb {
+  .orb,
+  .seq {
     animation: none;
+  }
+  .typing {
+    display: none;
   }
 }

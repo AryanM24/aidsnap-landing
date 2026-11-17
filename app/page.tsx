@@ -1,81 +1,147 @@
 import type React from "react"
-import { ArrowUp, AudioLines, ChevronRight, ListOrdered, Menu, Phone, SquarePen } from "lucide-react"
+import { ArrowUp, AudioLines, BatteryFull, Heart, KeyRound, ListOrdered, Menu, Phone, ShieldOff, Signal, SquarePen, Trash2, Wifi } from "lucide-react"
 import { Keycap, PLAY_URL, SiteFooter, SiteHeader, button } from "@/components/site"
-import { ScrubLine, Steps } from "@/components/home-motion"
 import { cn } from "@/lib/utils"
 
 const i = (n: number) => ({ "--i": n }) as React.CSSProperties
+const d = (s: number) => ({ "--d": `${s}s` }) as React.CSSProperties
 
 /** Two-tone heading: the claim in ink, the second line in muted. */
-function Heading({ a, b, className }: { a: string; b: string; className?: string }) {
+function Heading({ a, b, className }: { a: string; b?: string; className?: string }) {
   return (
     <h2 className={cn("text-3xl font-medium leading-tight tracking-tight md:text-5xl", className)}>
       {a}
-      <br />
-      <span className="text-muted-foreground">{b}</span>
+      {b ? (
+        <>
+          <br />
+          <span className="text-muted-foreground">{b}</span>
+        </>
+      ) : null}
     </h2>
   )
 }
 
-/** The bright element: AidSnap's chat, answering with the real Severe bleeding guide. */
-function ChatPreview() {
+/** An iPhone drawn in code, playing one AidSnap conversation (the real Severe bleeding guide) on load. */
+function IPhone() {
   const steps = [
     ["Press firmly and directly on the wound with a clean cloth.", "Use gauze, a towel or clothing."],
     ["Keep pressing hard without lifting to check.", "Hold steady pressure for at least 10 minutes."],
     ["If blood soaks through, add more cloth on top and press harder.", "Leave the first layer in place."],
   ]
   return (
-    <div className="mx-auto w-full max-w-[400px] rounded-3xl border bg-background p-2 shadow-[0_24px_64px_-24px_rgb(0_0_0/0.25)]">
-      <div className="overflow-hidden rounded-2xl bg-background">
-        <div className="flex h-12 items-center justify-between px-3 text-muted-foreground">
-          <Menu className="size-[18px]" strokeWidth={1.5} />
-          <div className="flex items-center gap-2">
-            <span className="inline-flex h-7 items-center rounded-full bg-signal px-3 text-xs font-medium text-signal-foreground">SOS</span>
-            <SquarePen className="size-[18px]" strokeWidth={1.5} />
+    <div className="relative mx-auto w-[320px] shrink-0" role="img" aria-label="AidSnap on an iPhone answering a question about a deep cut with numbered first aid steps">
+      {/* side buttons */}
+      <span className="absolute -left-[3px] top-[110px] h-8 w-[3px] rounded-l bg-ink/80" />
+      <span className="absolute -left-[3px] top-[160px] h-14 w-[3px] rounded-l bg-ink/80" />
+      <span className="absolute -left-[3px] top-[226px] h-14 w-[3px] rounded-l bg-ink/80" />
+      <span className="absolute -right-[3px] top-[180px] h-20 w-[3px] rounded-r bg-ink/80" />
+      <div className="rounded-[56px] bg-ink p-[11px] ring-1 ring-foreground/15 shadow-[0_40px_80px_-32px_rgb(0_0_0/0.45),inset_0_0_0_1px_rgb(255_255_255/0.12)]">
+        <div className="relative flex h-[640px] flex-col overflow-hidden rounded-[45px] bg-background" aria-hidden>
+          {/* status bar and Dynamic Island */}
+          <div className="flex h-12 shrink-0 items-center justify-between px-7 pt-1 text-[13px] font-semibold">
+            <span className="tabular-nums">9:41</span>
+            <span className="flex items-center gap-1">
+              <Signal className="size-3.5" strokeWidth={2.5} />
+              <Wifi className="size-3.5" strokeWidth={2.5} />
+              <BatteryFull className="size-5" strokeWidth={1.5} />
+            </span>
           </div>
-        </div>
-        <div className="space-y-4 px-4 pb-4 pt-2 text-[15px] leading-6">
-          <p className="ml-auto w-fit max-w-[80%] rounded-2xl bg-muted px-4 py-2">
-            My dad cut his hand on a kitchen knife. It won&apos;t stop bleeding.
-          </p>
-          <p>Press on the cut now and don&apos;t let go. Here is what to do:</p>
-          <ol className="space-y-3">
-            {steps.map(([action, detail], n) => (
-              <li key={n} className="flex gap-2">
-                <span className="mt-0.5">
-                  <Keycap n={n + 1} />
-                </span>
-                <span>
-                  {action}
-                  <span className="block text-sm text-muted-foreground">{detail}</span>
-                </span>
-              </li>
-            ))}
-          </ol>
-          <div className="space-y-3 rounded-xl border bg-card p-4">
-            <div>
-              <p className="font-medium">Severe bleeding</p>
-              <p className="text-sm text-muted-foreground">Stop heavy bleeding from a wound with firm, direct pressure.</p>
+          <span className="absolute left-1/2 top-[11px] h-[30px] w-[100px] -translate-x-1/2 rounded-full bg-ink" />
+
+          {/* app header */}
+          <div className="flex h-11 shrink-0 items-center justify-between px-4 text-muted-foreground">
+            <Menu className="size-[18px]" strokeWidth={1.5} />
+            <div className="flex items-center gap-3">
+              <span className="inline-flex h-7 items-center rounded-full bg-signal px-3 text-xs font-medium text-signal-foreground">SOS</span>
+              <SquarePen className="size-[18px]" strokeWidth={1.5} />
             </div>
-            <span className="flex h-11 items-center justify-center gap-2 rounded-lg bg-primary text-sm font-medium text-primary-foreground">
-              <ListOrdered className="size-4" strokeWidth={1.5} />
-              Start step by step
-            </span>
           </div>
-        </div>
-        <div className="p-2">
-          <div className="flex items-center justify-between rounded-2xl border bg-muted/30 p-2 pl-3">
-            <span className="text-[15px] text-muted-foreground">Describe what happened</span>
-            <span className="flex items-center gap-2">
-              <AudioLines className="size-[18px] text-muted-foreground" strokeWidth={1.5} />
-              <span className="flex size-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                <ArrowUp className="size-4" strokeWidth={2} />
+
+          {/* thread */}
+          <div className="flex-1 space-y-3 overflow-hidden px-4 pt-2 text-[13.5px] leading-[1.45]">
+            <p className="seq ml-auto w-fit max-w-[82%] rounded-2xl bg-muted px-3.5 py-2" style={d(0.5)}>
+              My dad cut his hand on a kitchen knife. It won&apos;t stop bleeding.
+            </p>
+            <div className="relative">
+              <div className="typing absolute left-0 top-1 flex gap-1">
+                <span className="size-1.5 rounded-full bg-muted-foreground" />
+                <span className="size-1.5 rounded-full bg-muted-foreground" />
+                <span className="size-1.5 rounded-full bg-muted-foreground" />
+              </div>
+              <p className="seq" style={d(2.5)}>
+                Press on the cut now and don&apos;t let go. Here is what to do:
+              </p>
+            </div>
+            <ol className="space-y-2.5">
+              {steps.map(([action, detail], n) => (
+                <li key={n} className="seq flex gap-2" style={d(2.8 + n * 0.35)}>
+                  <span className="mt-px">
+                    <Keycap n={n + 1} />
+                  </span>
+                  <span>
+                    {action}
+                    <span className="block text-[12px] text-muted-foreground">{detail}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <div className="seq space-y-2.5 rounded-xl border bg-card p-3" style={d(4.1)}>
+              <div>
+                <p className="font-medium">Severe bleeding</p>
+                <p className="text-[12px] text-muted-foreground">Stop heavy bleeding with firm, direct pressure.</p>
+              </div>
+              <span className="flex h-9 items-center justify-center gap-2 rounded-lg bg-primary text-[12.5px] font-medium text-primary-foreground">
+                <ListOrdered className="size-3.5" strokeWidth={1.5} />
+                Start step by step
               </span>
-            </span>
+            </div>
+          </div>
+
+          {/* composer and home indicator */}
+          <div className="shrink-0 px-2.5 pb-2 pt-2">
+            <div className="flex items-center justify-between rounded-[18px] border bg-muted/30 p-1.5 pl-3">
+              <span className="text-[13.5px] text-muted-foreground">Describe what happened</span>
+              <span className="flex items-center gap-2">
+                <AudioLines className="size-4 text-muted-foreground" strokeWidth={1.5} />
+                <span className="flex size-7 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                  <ArrowUp className="size-3.5" strokeWidth={2} />
+                </span>
+              </span>
+            </div>
+            <div className="mx-auto mt-2.5 h-[5px] w-[120px] rounded-full bg-foreground" />
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+const connectors = [
+  { name: "Apple Health", icon: null },
+  { name: "Health Connect", icon: "/connectors/health-connect.png", inset: true },
+  { name: "WHOOP", icon: "/connectors/whoop.png" },
+  { name: "Oura", icon: "/connectors/oura.png" },
+  { name: "Withings", icon: "/connectors/withings.png" },
+  { name: "Dexcom", icon: "/connectors/dexcom.png" },
+]
+
+function Connectors() {
+  return (
+    <ul className="flex flex-wrap justify-center gap-x-6 gap-y-8 sm:gap-x-10">
+      {connectors.map((c) => (
+        <li key={c.name} className="flex w-20 flex-col items-center gap-3">
+          <span className="relative flex size-16 items-center justify-center overflow-hidden rounded-[22.5%] bg-white shadow-[0_1px_2px_rgb(0_0_0/0.06)] outline outline-1 -outline-offset-1 outline-black/10">
+            {c.icon ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={c.icon} alt="" className={c.inset ? "size-[68%]" : "size-full"} />
+            ) : (
+              <Heart className="size-7 text-zinc-500" strokeWidth={1.5} />
+            )}
+          </span>
+          <span className="text-center text-xs text-muted-foreground">{c.name}</span>
+        </li>
+      ))}
+    </ul>
   )
 }
 
@@ -171,27 +237,21 @@ function CallVisual() {
   )
 }
 
-const sources = [
-  ["Apple Health", true],
-  ["Health Connect", false],
-  ["WHOOP", true],
-  ["Oura", false],
-  ["Withings", false],
-  ["Dexcom", false],
-] as const
-
-const how = [
+const privacy = [
   {
-    title: "Say what happened",
-    body: "Type it, say it or add a photo. You don't need medical words. AidSnap asks what it needs to know.",
+    icon: KeyRound,
+    title: "Your records stay on your phone",
+    body: "Apple Health and Health Connect records never leave it. AidSnap sends only a short summary with your question.",
   },
   {
-    title: "Follow short steps",
-    body: "Answers come as numbered steps. Open the full guide to go one step at a time, with timers and a CPR beat.",
+    icon: ShieldOff,
+    title: "No ads, no trackers, never sold",
+    body: "No advertising or analytics software. Health data is used only to answer you.",
   },
   {
-    title: "Call when it's serious",
-    body: "AidSnap puts your region's emergency number on screen. It never dials on its own: you tap, confirm and talk.",
+    icon: Trash2,
+    title: "Delete it all from Settings",
+    body: "Forget what AidSnap remembers, disconnect a wearable, or delete your account and everything with it.",
   },
 ]
 
@@ -200,7 +260,7 @@ export default function Home() {
     <>
       <SiteHeader />
       <main className="overflow-x-hidden">
-        <section className="mx-auto grid max-w-6xl items-center gap-16 px-4 pb-24 pt-16 sm:px-6 md:pt-24 lg:grid-cols-[1.25fr_1fr] lg:pb-32">
+        <section className="mx-auto grid max-w-6xl items-center gap-16 px-4 pb-24 pt-16 sm:px-6 md:pt-20 lg:grid-cols-[1fr_auto] lg:gap-24 lg:pb-32">
           <div className="space-y-8">
             <h1 className="rise text-[40px] font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-[64px]">
               Know what to do
@@ -211,21 +271,27 @@ export default function Home() {
               Tell AidSnap what happened, by text, photo or voice. It answers in clear steps, stays with you while you do
               them, and keeps the emergency number one tap away.
             </p>
-            <div className="rise flex flex-wrap gap-3" style={i(2)}>
+            <div className="rise flex flex-wrap items-center gap-4" style={i(2)}>
               <a href={PLAY_URL} target="_blank" rel="noopener noreferrer" className={button.primary}>
                 Get it on Android
               </a>
-              <a href="#how" className={button.secondary}>
-                See how it works
-              </a>
+              <span className="text-sm text-muted-foreground">iOS coming soon</span>
             </div>
           </div>
-          <div className="rise" style={i(3)}>
-            <ChatPreview />
+          <div className="rise" style={i(2)}>
+            <IPhone />
           </div>
         </section>
 
-        <section className="mx-auto max-w-6xl px-4 py-24 sm:px-6 md:py-32">
+        <section className="border-y bg-muted/40 px-4 py-20 sm:px-6 md:py-24">
+          <h2 className="mb-12 text-center text-2xl font-medium tracking-tight md:text-3xl">
+            Works with the health data you already have
+          </h2>
+          <Connectors />
+          <p className="mt-10 text-center text-sm text-muted-foreground">Off until you connect one. Disconnect any time.</p>
+        </section>
+
+        <section id="features" className="mx-auto max-w-6xl scroll-mt-16 px-4 py-24 sm:px-6 md:py-32">
           <Heading a="Everything for the next ten minutes." b="Nothing you have to learn first." className="mb-12 md:mb-16" />
           <div className="grid grid-flow-dense gap-4 lg:grid-cols-3">
             <Card
@@ -248,50 +314,29 @@ export default function Home() {
             >
               <CallVisual />
             </Card>
-            <div className="flex flex-col gap-8 rounded-3xl border bg-card p-6 md:flex-row md:items-center md:justify-between lg:col-span-3">
-              <div className="max-w-md space-y-1">
-                <h3 className="font-medium">Answers that know you, if you want</h3>
-                <p className="text-sm text-muted-foreground">
-                  Connect your health apps and wearables, and AidSnap can read your heart rate, sleep or glucose when you
-                  ask. Off until you turn it on.
-                </p>
+          </div>
+        </section>
+
+        <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6 md:pb-32">
+          <Heading a="Private by default." className="mb-12 text-center md:mb-16" />
+          <div className="grid gap-10 md:grid-cols-3 md:gap-12">
+            {privacy.map(({ icon: Icon, title, body }) => (
+              <div key={title} className="space-y-3">
+                <Icon className="size-6" strokeWidth={1.5} />
+                <h3 className="font-medium">{title}</h3>
+                <p className="text-sm text-muted-foreground">{body}</p>
               </div>
-              <ul className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm sm:grid-cols-3">
-                {sources.map(([name, on]) => (
-                  <li key={name} className="flex items-center gap-2">
-                    <span className={cn("size-2 rounded-full", on ? "bg-positive" : "bg-muted-foreground/30")} />
-                    {name}
-                  </li>
-                ))}
-              </ul>
-            </div>
+            ))}
           </div>
         </section>
 
-        <section id="how" className="mx-auto grid max-w-6xl scroll-mt-16 gap-12 px-4 py-24 sm:px-6 md:py-32 lg:grid-cols-2">
-          <div>
-            <Heading a="It starts with one question." b="What happened?" className="lg:sticky lg:top-32" />
-          </div>
-          <Steps steps={how} />
-        </section>
-
-        <section className="mx-auto max-w-4xl px-4 py-24 sm:px-6 md:py-40">
-          <ScrubLine text="No one should ever feel powerless when it matters most." />
-          <a href="/manifesto" className="mt-8 inline-flex items-center gap-1 text-muted-foreground transition-colors hover:text-foreground">
-            Read the manifesto
-            <ChevronRight className="size-4" strokeWidth={1.5} />
-          </a>
-        </section>
-
-        <section id="download" className="mx-auto max-w-6xl px-4 pb-24 sm:px-6 md:pb-32">
-          <div className="flex flex-col items-start justify-between gap-8 rounded-3xl bg-muted/60 p-8 md:flex-row md:items-end md:p-12">
+        <section className="mx-auto max-w-6xl px-4 pb-24 sm:px-6 md:pb-32">
+          <div className="flex flex-col items-center rounded-3xl bg-muted/60 px-6 py-20 text-center md:py-24">
             <Heading a="Keep it on your phone" b="before you need it." />
-            <div className="space-y-3">
-              <a href={PLAY_URL} target="_blank" rel="noopener noreferrer" className={button.primary}>
-                Get it on Android
-              </a>
-              <p className="text-sm text-muted-foreground">iOS is coming soon.</p>
-            </div>
+            <a href={PLAY_URL} target="_blank" rel="noopener noreferrer" className={cn(button.primary, "mt-10")}>
+              Get it on Android
+            </a>
+            <p className="mt-4 text-sm text-muted-foreground">iOS coming soon. Delete your account any time.</p>
           </div>
         </section>
       </main>

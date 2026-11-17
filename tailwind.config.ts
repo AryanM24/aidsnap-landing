@@ -18,6 +18,7 @@ const config: Config = {
         primary: { DEFAULT: channel("primary"), foreground: channel("primary-foreground") },
         signal: { DEFAULT: channel("signal"), foreground: channel("signal-foreground") },
         positive: channel("positive"),
+        ink: channel("ink"),
         border: "var(--border)",
         ring: "var(--ring)",
       },
