@@ -49,6 +49,7 @@ const structured = [
   },
 ]
 import { HeroPhone } from "@/components/hero-phone"
+import { CONNECTORS, ConnectorIcon } from "@/components/connector-icon"
 import { cn } from "@/lib/utils"
 
 const i = (n: number) => ({ "--i": n }) as React.CSSProperties
@@ -71,15 +72,6 @@ function Heading({ a, b, className }: { a: string; b?: string; className?: strin
 /** Cells divided by 1px lines in the frame's color: the grid gap shows the border color behind. */
 const cells = "grid gap-px bg-border"
 
-const connectors = [
-  // Apple's HIG: show the Health icon exactly as supplied, with no mask, border or backing.
-  { name: "Apple Health", icon: "/connectors/apple-health.png", bare: true },
-  { name: "Health Connect", icon: "/connectors/health-connect.png", inset: true },
-  { name: "WHOOP", icon: "/connectors/whoop.png" },
-  { name: "Oura", icon: "/connectors/oura.png" },
-  { name: "Withings", icon: "/connectors/withings.png" },
-  { name: "Dexcom", icon: "/connectors/dexcom.png" },
-]
 
 function Cell({ title, body, children, className }: { title: string; body: string; children: React.ReactNode; className?: string }) {
   return (
@@ -217,17 +209,9 @@ export default function Home() {
           <h2 className="text-2xl font-medium tracking-tight md:text-3xl">Works with the health data you already have</h2>
           <p className="mt-3 text-muted-foreground">Off until you connect one. Disconnect any time.</p>
           <ul className="mt-12 grid grid-cols-2 gap-y-10 sm:grid-cols-3 lg:grid-cols-6">
-            {connectors.map((c) => (
+            {CONNECTORS.map((c) => (
               <li key={c.name} className="flex flex-col items-center gap-4">
-                {c.bare ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img src={c.icon} alt="" width={64} height={64} loading="lazy" decoding="async" className="size-16" />
-                ) : (
-                  <span className="flex size-16 items-center justify-center overflow-hidden rounded-[22.5%] bg-white outline outline-1 -outline-offset-1 outline-black/10">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={c.icon} alt="" width={64} height={64} loading="lazy" decoding="async" className={c.inset ? "size-[68%]" : "size-full"} />
-                  </span>
-                )}
+                <ConnectorIcon c={c} />
                 <span className="text-sm text-muted-foreground">{c.name}</span>
               </li>
             ))}

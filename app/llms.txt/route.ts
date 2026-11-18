@@ -23,6 +23,7 @@ ${GUIDES.map((g) => `- [${g.title}](${SITE_URL}/guides/${g.id}): ${g.summary} ($
 
 ## Pages
 - [Home](${SITE_URL}/)
+- [Features](${SITE_URL}/features)
 - [Support and FAQ](${SITE_URL}/support)
 - [Privacy policy](${SITE_URL}/privacy)
 - [Terms of service](${SITE_URL}/terms)
@@ -41,6 +42,7 @@ Every page below also has a Markdown version at the same URL with .md added.
 - [Home](${SITE_URL}/index.md)
 - [First aid guides](${SITE_URL}/guides.md)
 ${GUIDES.map((g) => `- [${g.title}](${SITE_URL}/guides/${g.id}.md)`).join("\n")}
+- [Features](${SITE_URL}/features.md)
 - [Support and FAQ](${SITE_URL}/support.md)
 - [Privacy policy](${SITE_URL}/privacy.md)
 - [Terms of service](${SITE_URL}/terms.md)
