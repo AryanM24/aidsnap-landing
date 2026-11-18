@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // ESLint is not installed; type errors still fail the build.
+  // ESLint is not installed. Types are checked locally (npm run typecheck), not again on Vercel, to save ~5s a deploy.
   eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: !!process.env.VERCEL },
   poweredByHeader: false,
   // Markdown twins of the pages: /privacy.md is served by app/md/[slug].
   async rewrites() {
