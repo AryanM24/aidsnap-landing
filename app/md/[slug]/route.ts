@@ -1,4 +1,6 @@
 import { GUIDES, URGENCY_LABEL } from "@/lib/guides"
+import { manifestoMarkdown } from "@/lib/manifesto"
+import { featuresMarkdown } from "@/lib/features"
 import { privacy } from "@/lib/legal/privacy"
 import { terms } from "@/lib/legal/terms"
 import { health } from "@/lib/legal/health"
@@ -74,16 +76,8 @@ AidSnap closes that gap. Describe what happened and it answers with clear first 
 - **Trust and safety:** We hold ourselves to careful medical sources and keep your data under your control.
 - **Global access:** Emergency care knowledge should be available to everyone, regardless of location or background.
 `,
-  manifesto: () => `# We want to save every life.
-
-Emergencies don't wait. Seconds matter. Yet in those critical moments, most people freeze, not because they don't care, but because they don't know what to do. That gap between injury and action costs lives.
-
-AidSnap exists to close that gap. We bring advanced AI into the hands of everyday people, giving instant, clear first aid guidance the moment it's needed. No manuals. No guesswork. Just clear, reliable help when every second counts.
-
-AidSnap is not another health app. We want it to become how people respond to emergencies in the 21st century.
-
-We are driven by one belief: no one should ever feel powerless when it matters most.
-`,
+  manifesto: manifestoMarkdown,
+  features: featuresMarkdown,
   "delete-account": () => `# Delete your account
 
 You can delete your AidSnap account and everything stored with it at any time. It cannot be undone.

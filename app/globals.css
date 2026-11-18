@@ -17,8 +17,6 @@
   --border: oklch(0.92 0.004 286.32);
   --ring: oklch(0.705 0.015 286.067);
   --ease: cubic-bezier(0.2, 0, 0, 1);
-  /* Fixed in both themes: the footer and the phone body stay dark. */
-  --ink: 0.141 0.005 285.823;
   color-scheme: light;
 }
 

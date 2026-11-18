@@ -8,6 +8,7 @@ const lastModified = new Date("2026-11-17")
 const pages: [string, number, MetadataRoute.Sitemap[number]["changeFrequency"]][] = [
   ["", 1, "weekly"],
   ["/guides", 0.9, "monthly"],
+  ["/features", 0.8, "monthly"],
   ["/support", 0.6, "monthly"],
   ["/about", 0.5, "monthly"],
   ["/manifesto", 0.5, "yearly"],

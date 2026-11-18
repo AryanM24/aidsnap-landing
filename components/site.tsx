@@ -32,8 +32,8 @@ export function Mark({ className }: { className?: string }) {
 export { Keycap } from "@/components/keycap"
 
 /** Small squares where the rails meet a section line, echoing the viewfinder in the mark. */
-function Marks({ dark }: { dark?: boolean }) {
-  const m = cn("absolute -bottom-[4.5px] z-10 size-2 border", dark ? "border-white/20 bg-ink" : "bg-background")
+function Marks() {
+  const m = "absolute -bottom-[4.5px] z-10 size-2 border bg-background"
   return (
     <>
       <span className={cn(m, "-left-[4.5px]")} aria-hidden />
@@ -50,23 +50,21 @@ export function Frame({
   children,
   className,
   id,
-  dark,
   band,
   grow,
 }: {
   children: React.ReactNode
   className?: string
   id?: string
-  dark?: boolean
   /** A tinted full-width band, for page title areas. */
   band?: boolean
   /** Stretch to fill the rest of the screen, rails and all, so the footer sits at the bottom. */
   grow?: boolean
 }) {
   return (
-    <section id={id} className={cn("scroll-mt-16 border-b", dark && "border-white/10", band && "bg-muted/50", grow && "flex flex-1 flex-col")}>
-      <div className={cn("relative mx-auto w-full max-w-6xl border-x", dark && "border-white/10", grow && "flex-1", className)}>
-        <Marks dark={dark} />
+    <section id={id} className={cn("scroll-mt-16 border-b", band && "bg-muted/50", grow && "flex flex-1 flex-col")}>
+      <div className={cn("relative mx-auto w-full max-w-6xl border-x", grow && "flex-1", className)}>
+        <Marks />
         {children}
       </div>
     </section>
@@ -74,7 +72,7 @@ export function Frame({
 }
 
 const nav = [
-  { href: "/#features", label: "Features" },
+  { href: "/features", label: "Features" },
   { href: "/about", label: "About" },
   { href: "/support", label: "Support" },
 ]
@@ -121,7 +119,7 @@ const columns = [
   {
     title: "Product",
     links: [
-      { href: "/#features", label: "Features" },
+      { href: "/features", label: "Features" },
       { href: "/guides", label: "First aid guides" },
       { href: PLAY_URL, label: "Android" },
       { href: "/coming-soon", label: "iOS" },
@@ -156,7 +154,7 @@ const social = [
 
 /** Viewfinder corners from the mark, drawn around any block. */
 function Corners() {
-  const c = "absolute size-[6vw] max-w-16 max-h-16 border-white/25"
+  const c = "absolute size-[6vw] max-w-16 max-h-16 border-foreground/20"
   return (
     <>
       <span className={cn(c, "left-0 top-0 rounded-tl-2xl border-l-2 border-t-2")} />
@@ -169,8 +167,8 @@ function Corners() {
 
 export function SiteFooter() {
   return (
-    <footer className="overflow-hidden bg-ink text-white">
-      <Frame dark className="grid gap-12 px-4 pb-16 pt-20 sm:px-6 md:grid-cols-[1fr_auto]">
+    <footer className="overflow-hidden bg-muted/50">
+      <Frame className="grid gap-12 px-4 pb-16 pt-20 sm:px-6 md:grid-cols-[1fr_auto]">
         <div className="max-w-sm space-y-6">
           <Link href="/" className="flex w-fit items-center gap-2 text-[17px] font-medium tracking-tight">
             <Mark className="size-6" />
@@ -179,17 +177,17 @@ export function SiteFooter() {
           <p className="text-2xl font-medium leading-snug tracking-tight">
             Made for the minutes
             <br />
-            <span className="text-white/50">before help arrives.</span>
+            <span className="text-muted-foreground">before help arrives.</span>
           </p>
         </div>
         <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 sm:gap-12">
           {columns.map((c) => (
             <div key={c.title} className="space-y-3">
-              <p className="text-sm text-white/50">{c.title}</p>
+              <p className="text-sm text-muted-foreground">{c.title}</p>
               <ul className="space-y-2">
                 {c.links.map((l) => (
                   <li key={l.label}>
-                    <Link href={l.href} className="text-sm transition-colors hover:text-white/60">
+                    <Link href={l.href} className="text-sm transition-colors hover:text-muted-foreground">
                       {l.label}
                     </Link>
                   </li>
@@ -199,22 +197,22 @@ export function SiteFooter() {
           ))}
         </div>
       </Frame>
-      <Frame dark className="flex flex-wrap items-center justify-between gap-4 px-4 py-6 text-sm text-white/50 sm:px-6">
+      <Frame className="flex flex-wrap items-center justify-between gap-4 px-4 py-6 text-sm text-muted-foreground sm:px-6">
         <p>© {new Date().getFullYear()} AidSnap Inc.</p>
         <ul className="flex gap-4">
           {social.map((s) => (
             <li key={s.label}>
-              <a href={s.href} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-white">
+              <a href={s.href} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-foreground">
                 {s.label}
               </a>
             </li>
           ))}
         </ul>
       </Frame>
-      <div className="relative mx-auto flex max-w-6xl justify-center border-x border-white/10 px-4 pt-12" aria-hidden>
+      <div className="relative mx-auto flex max-w-6xl justify-center border-x px-4 pt-12" aria-hidden>
         <div className="relative translate-y-[22%] px-[3vw] pt-[2.5vw]">
           <Corners />
-          <p className="select-none text-[19vw] font-medium leading-[0.8] tracking-[-0.06em] text-white/[0.08] xl:text-[260px]">
+          <p className="select-none text-[19vw] font-medium leading-[0.8] tracking-[-0.06em] text-foreground/[0.06] xl:text-[260px]">
             AidSnap
           </p>
         </div>

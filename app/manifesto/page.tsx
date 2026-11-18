@@ -1,35 +1,33 @@
 import { meta } from "@/lib/seo"
 import { Page } from "@/components/site"
+import { MANIFESTO, MANIFESTO_LEAD, MANIFESTO_TITLE } from "@/lib/manifesto"
 
 export const metadata = meta({
   title: "Manifesto",
   description:
-    "Why AidSnap exists: in an emergency most people freeze because they don't know what to do. No one should feel powerless when it matters most.",
+    "Why AidSnap exists: in an emergency, the person standing there is the whole healthcare system for a few minutes. Most people freeze because they don't know what to do. No one should feel powerless when it matters most.",
   path: "/manifesto",
+  type: "article",
 })
 
 export default function Manifesto() {
   return (
-    <Page section="Company" title="We want to save every life.">
-      <div className="space-y-8 text-lg leading-relaxed text-muted-foreground">
-        <p>
-          Emergencies don&apos;t wait. Seconds matter. Yet in those critical moments, most people freeze, not because
-          they don&apos;t care, but because they don&apos;t know what to do. That gap between injury and action{" "}
-          <span className="text-foreground">costs lives</span>.
-        </p>
-        <p>
-          AidSnap exists to close that gap. We bring advanced AI into the hands of everyday people, giving{" "}
-          <span className="text-foreground">instant, clear first aid guidance</span> the moment it&apos;s needed. No
-          manuals. No guesswork. Just clear, reliable help when every second counts.
-        </p>
-        <p>
-          AidSnap is not another health app. We want it to become{" "}
-          <span className="text-foreground">how people respond to emergencies in the 21st century</span>.
-        </p>
-        <p className="border-l-2 border-foreground pl-6 text-2xl font-medium leading-snug tracking-tight text-foreground">
-          We are driven by one belief: no one should ever feel powerless when it matters most.
-        </p>
-      </div>
+    <Page section="Manifesto" title={MANIFESTO_TITLE} lead={MANIFESTO_LEAD}>
+      <article className="space-y-16">
+        {MANIFESTO.map((s, n) => (
+          <section key={s.heading} className="grid gap-4 md:grid-cols-[3rem_1fr]">
+            <span className="font-mono text-sm tabular-nums leading-8 text-muted-foreground">{String(n + 1).padStart(2, "0")}</span>
+            <div className="space-y-5">
+              <h2 className="text-2xl font-medium tracking-tight">{s.heading}</h2>
+              {s.paragraphs.map((p) => (
+                <p key={p.slice(0, 32)} className="text-lg leading-relaxed text-muted-foreground [text-wrap:pretty]">
+                  {p}
+                </p>
+              ))}
+            </div>
+          </section>
+        ))}
+      </article>
     </Page>
   )
 }

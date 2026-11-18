@@ -7,7 +7,7 @@ const nextConfig = {
   async rewrites() {
     return [
       { source: "/guides/:id.md", destination: "/md/guides/:id" },
-      { source: "/:slug(index|guides|privacy|terms|consumer-health-data|support|about|manifesto|delete-account).md", destination: "/md/:slug" },
+      { source: "/:slug(index|guides|privacy|terms|consumer-health-data|support|features|about|manifesto|delete-account).md", destination: "/md/:slug" },
     ]
   },
   async headers() {
