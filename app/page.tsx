@@ -194,7 +194,7 @@ export default function Home() {
           <h1 className="rise mx-auto max-w-4xl text-[40px] font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl lg:text-7xl">
             AI that saves lives
             <br />
-            <span className="text-muted-foreground">in emergencies</span>
+            in emergencies
           </h1>
           <p className="rise mx-auto mt-6 max-w-2xl text-lg text-muted-foreground md:text-xl" style={i(1)}>
             Get instant, life-saving first aid guidance powered by AI. AidSnap provides step-by-step emergency
