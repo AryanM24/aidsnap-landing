@@ -4,8 +4,11 @@ import { PLAY_URL, SITE_URL } from "@/components/site"
 
 export const EMAIL = "aryan.mittal@aidsnap.com"
 
-export const md = (body: string) =>
-  new Response(body, { headers: { "Content-Type": "text/markdown; charset=utf-8" } })
+/** A Markdown twin. The canonical Link header tells search engines the HTML page is the one to index. */
+export const md = (body: string, path: string) =>
+  new Response(body, {
+    headers: { "Content-Type": "text/markdown; charset=utf-8", Link: `<${SITE_URL}${path}>; rel="canonical"` },
+  })
 
 const list = (items: string[]) => items.map((s) => `- ${s}`).join("\n")
 

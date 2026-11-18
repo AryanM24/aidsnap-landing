@@ -108,5 +108,6 @@ export const dynamicParams = false
 export const generateStaticParams = () => Object.keys(pages).map((slug) => ({ slug }))
 
 export async function GET(_: Request, { params }: { params: Promise<{ slug: string }> }) {
-  return md(pages[(await params).slug]())
+  const { slug } = await params
+  return md(pages[slug](), slug === "index" ? "/" : `/${slug}`)
 }
