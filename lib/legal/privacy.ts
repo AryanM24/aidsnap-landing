@@ -4,7 +4,7 @@ import type { LegalDoc } from "@/components/legal"
 export const privacy: LegalDoc = {
   slug: "privacy",
   title: "Privacy Policy",
-  effective: "November 17, 2026",
+  effective: "November 24, 2026",
   intro: [
     "This Privacy Policy explains how AidSnap Inc. (\"AidSnap,\" \"we,\" \"us\" or \"our\") collects, uses, discloses, stores and deletes personal information when you use the AidSnap mobile application (the \"App\") and the website at aidsnap.com (the \"Site\"), together the \"Services.\" It also explains the choices and rights you have.",
     "AidSnap is a first aid assistant. Using it can involve information about your health, which the law treats as sensitive. We have tried to describe plainly what happens to that information, including the parts that are handled by other companies on our behalf. If you live in Washington, Nevada or another state with a consumer health data law, our Consumer Health Data Privacy Policy also applies to you and forms part of this policy.",
@@ -15,7 +15,7 @@ export const privacy: LegalDoc = {
       id: "collect",
       heading: "Information we collect",
       body: [
-        "Account information. To use the App you create an account with an email address and a password. Sign-in is handled by Firebase Authentication, a Google service. We never see or store your password in readable form.",
+        "Account information. To use the App you create an account with an email address and a password. Sign-in is handled by Firebase Authentication, a Google service. We never store your password. If you reset it, the new password passes through our server, over an encrypted connection, on its way to Firebase, and we do not keep it.",
         "Medical ID. You may choose to fill in a Medical ID: your name, date of birth, sex, height, weight, blood type, phone number, allergies, medical conditions, medications and pregnancies. Every field is optional and entered by you, and you can change or clear any of it at any time.",
         "Emergency contacts and insurance cards. You may add emergency contacts, either by typing them or by choosing them one at a time from your phone's contacts. For each, we store the name, relationship and phone number you choose, and which contact is primary. AidSnap never reads your address book as a whole. You may also store insurance card details (provider, member ID and group number) and a photo of the card.",
         "Conversations. When you use the chat, we collect the messages you send, the photos you attach and the replies AidSnap gives. When you use AidSnap Live, the voice mode, your microphone audio and, if you turn the camera on, about one camera frame per second are streamed for the length of the session, and a written transcript of what you and the assistant said is saved to your conversation when the session ends. We do not record or store the audio or the camera frames themselves.",
@@ -29,7 +29,7 @@ export const privacy: LegalDoc = {
       id: "use",
       heading: "How we use your information",
       body: [
-        "We use personal information only to provide and protect the Services. Specifically, we use it to answer your questions with first aid guidance that takes your Medical ID, connected health data and remembered facts into account, for example by warning you before suggesting a medicine you are allergic to; to show your Medical ID, emergency contacts and insurance cards back to you; to show the right emergency numbers for your region and to offer a call to emergency services or one of your contacts; to schedule the reminders and timer alerts you ask for; to keep your conversation history so you can return to it; and to operate, secure, debug and improve the reliability of the Services.",
+        "We use personal information only to provide and protect the Services. Specifically, we use it to answer your questions with first aid guidance that takes your Medical ID, connected health data and remembered facts into account, for example by warning you before suggesting a medicine you are allergic to; to show your Medical ID, emergency contacts and insurance cards back to you; to show the right emergency numbers for your region and to offer a call to emergency services or one of your contacts; to schedule the reminders and timer alerts you ask for; to keep your conversation history so you can return to it; to send you account emails, which are a welcome message, a link to verify your email address, password reset links, and notices that your password changed or your account is being deleted; and to operate, secure, debug and improve the reliability of the Services.",
         "AidSnap never places a call on its own. A call is made only when you tap a call button, and calls to emergency services ask you to confirm first. The call itself is placed by your phone's dialer, not by AidSnap, and we do not receive its contents.",
         "We do not use your information for advertising or marketing, we do not sell it, and we do not share it for cross-context behavioral advertising. We do not use your conversations or health data to train AI models.",
       ],
@@ -63,6 +63,7 @@ export const privacy: LegalDoc = {
           list: [
             "Google, for Firebase Authentication, Cloud Firestore and Cloud Storage (your account, Medical ID, emergency contacts and insurance cards) and the Gemini API (generating answers)",
             "Railway, which hosts our server and the databases that hold conversations, remembered facts and encrypted wearable tokens",
+            "Resend, which delivers account emails and receives your email address and the content of those emails, which never includes health information",
             "Vercel, which hosts the Site",
             "Tavily, for searches of trusted medical websites",
             "WHOOP, Oura, Withings and Dexcom, only if you connect them, as the source of the readings you ask about",
@@ -84,7 +85,7 @@ export const privacy: LegalDoc = {
       heading: "How long we keep information",
       body: [
         "We keep your account, Medical ID, contacts and insurance cards until you change or delete them, or delete your account. We keep each conversation, with its photos, transcripts and any health values read during it, until you delete it or your account. We keep remembered facts until you delete them, turn memory off and delete them, or delete your account. We keep a wearable's access token until you disconnect it or delete your account. Operational logs are kept for a short period for security and troubleshooting and then discarded.",
-        "When you delete your account, we delete all of the above. Information already sent to Google to generate an answer is handled under Google's own retention terms for the Gemini API.",
+        "When you delete your account, we delete all of the above. Emails already sent to you, and the records of them, are handled under Resend's own retention terms. Information already sent to Google to generate an answer is handled under Google's own retention terms for the Gemini API.",
       ],
     },
     {
